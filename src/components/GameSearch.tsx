@@ -28,7 +28,7 @@ export const GameSearch = ({
   return (
     <div className="flex flex-col sm:flex-row gap-4 w-full max-w-2xl mx-auto">
       <div className="relative flex-1">
-        <Search className="w-4 h-4 mr-2" />
+        <Search className="left-3 top-1/2 transform -translate-y-1/2 w-4 h-4" />
         <Input
           type="text"
           placeholder="Search games..."
