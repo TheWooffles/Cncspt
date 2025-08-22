@@ -46,9 +46,9 @@ export const gamesData: Game[] = [
     title: 'Basket Stars',
     description: 'Basketball Game',
     instructions: 'Plays',
-    thumbnail: '/games/BasketballStars/splash.jpeg',
+    thumbnail: '/games/basketball-stars/assets/images/basketball-stars.png',
     tags: ['Unity', 'strategy', 'action', 'speed'],
-    folder: 'BasketballStars',
+    folder: 'basketball-stars',
     featured: true,
   },
 ];
