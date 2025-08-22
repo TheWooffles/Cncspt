@@ -1,82 +1,56 @@
 import { useEffect, useRef } from 'react';
-import { Maximize } from 'lucide-react';
-import { Button } from '@/components/ui/button';
+import { Game } from '@/types/game';
 
 interface GameLoaderProps {
-  game: {
-    title: string;
-    folder: string;
-    thumbnail: string;
-  };
+  game: Game;
   isFullscreen: boolean;
   onEnterFullscreen: () => void;
   onExitFullscreen: () => void;
 }
 
-export const GameLoader: React.FC<GameLoaderProps> = ({
-  game,
-  isFullscreen,
-  onEnterFullscreen,
-  onExitFullscreen,
-}) => {
+export const GameLoader = ({ game, isFullscreen, onEnterFullscreen, onExitFullscreen }: GameLoaderProps) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
-  // Handle fullscreen toggle
-  const toggleFullscreen = () => {
-    if (!document.fullscreenElement && iframeRef.current) {
-      iframeRef.current.requestFullscreen();
-      onEnterFullscreen();
-    } else if (document.fullscreenElement) {
-      document.exitFullscreen();
-      onExitFullscreen();
-    }
-  };
-
+  // Handle fullscreen changes
   useEffect(() => {
-    const handleFullscreenChange = () => {
+    const container = containerRef.current;
+    if (!container) return;
+
+    if (isFullscreen && container.requestFullscreen) {
+      container.requestFullscreen().catch(() => {
+        onEnterFullscreen();
+      });
+    } else if (!isFullscreen && document.fullscreenElement) {
+      document.exitFullscreen().catch(() => {
+        onExitFullscreen();
+      });
+    }
+  }, [isFullscreen, onEnterFullscreen, onExitFullscreen]);
+
+  // Sync when user presses ESC
+  useEffect(() => {
+    const handleFSChange = () => {
       if (!document.fullscreenElement) {
         onExitFullscreen();
       }
     };
-
-    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    document.addEventListener('fullscreenchange', handleFSChange);
     return () => {
-      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+      document.removeEventListener('fullscreenchange', handleFSChange);
     };
   }, [onExitFullscreen]);
 
   return (
-    <div className="relative w-full aspect-[16/9] bg-black rounded-xl overflow-hidden">
-      {/* Game iframe */}
+    <div ref={containerRef} className="w-full h-full relative rounded-lg overflow-hidden">
       <iframe
         ref={iframeRef}
         src={`/games/${game.folder}/index.html`}
         title={game.title}
-        className="absolute inset-0 w-full h-full"
+        className="w-full h-full border-0"
         allowFullScreen
-      ></iframe>
-
-      {/* Bottom Bar */}
-      {!isFullscreen && (
-        <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-md flex items-center justify-between p-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={game.thumbnail}
-              alt={game.title}
-              className="w-8 h-8 rounded object-cover"
-            />
-            <span className="text-white font-semibold text-sm">{game.title}</span>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={toggleFullscreen}
-            className="text-white hover:bg-white/10"
-          >
-            <Maximize className="w-5 h-5" />
-          </Button>
-        </div>
-      )}
+        allow="fullscreen *; gamepad; autoplay; microphone; camera"
+      />
     </div>
   );
 };
