@@ -20,7 +20,7 @@ export const Footer = () => {
               © 2024 Cncspt. All rights reserved.
             </p>
             <p className="text-xs text-muted-foreground mt-1">
-              Built with modern web technologies
+              Built with ❤ by Cncspt (Formerly Wooffles)
             </p>
           </div>
         </div>
