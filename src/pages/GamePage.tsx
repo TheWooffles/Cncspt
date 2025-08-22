@@ -58,44 +58,11 @@ const GamePage = () => {
       </header>
 
       {/* Main Content */}
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-8 space-y-8">
+        {/* Top Row: Game + Related */}
         <div className="grid grid-cols-12 gap-8">
-          {/* Game Info */}
-          <div className="col-span-12 lg:col-span-3 px-2 lg:px-0">
-            <Card className="bg-gradient-card backdrop-blur-glass border-glass-border animate-fade-in shadow-glass">
-              <CardHeader className="pb-4">
-                <CardTitle className="text-foreground text-2xl font-bold">{game.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-6 max-h-[70vh] overflow-y-auto">
-                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{game.description}</p>
-
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-foreground text-lg">Instructions:</h4>
-                  <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border whitespace-pre-line">
-                    {game.instructions}
-                  </p>
-                </div>
-
-                <div className="space-y-3">
-                  <h4 className="font-semibold text-foreground text-lg">Tags:</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {game.tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        variant="outline"
-                        className="border-glass-border bg-glass-secondary/50 hover:bg-glass-primary transition-colors px-3 py-1"
-                      >
-                        {tag}
-                      </Badge>
-                    ))}
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
           {/* Game Container */}
-          <div className="col-span-12 lg:col-span-6 px-2 lg:px-0">
+          <div className="col-span-12 lg:col-span-8 px-2 lg:px-0">
             <Card className="group bg-gradient-card backdrop-blur-glass border-glass-border animate-fade-in shadow-glass hover:shadow-glow transition-all duration-300 h-full">
               <CardContent className="p-4 flex flex-col h-full">
                 <GameLoader
@@ -108,7 +75,7 @@ const GamePage = () => {
           </div>
 
           {/* Related Games */}
-          <div className="col-span-12 lg:col-span-3 px-2 lg:px-0">
+          <div className="col-span-12 lg:col-span-4 px-2 lg:px-0">
             <h4 className="text-foreground text-xl font-semibold mb-4">Related Games</h4>
             <div className="space-y-4 max-h-[70vh] overflow-y-auto">
               {relatedGames.map((related) => (
@@ -142,6 +109,43 @@ const GamePage = () => {
               ))}
             </div>
           </div>
+        </div>
+
+        {/* Bottom Row: Game Info */}
+        <div className="col-span-12">
+          <Card className="bg-gradient-card backdrop-blur-glass border-glass-border animate-fade-in shadow-glass">
+            <CardHeader className="pb-4">
+              <CardTitle className="text-foreground text-2xl font-bold">{game.title}</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 max-h-[50vh] overflow-y-auto">
+              {/* Description */}
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{game.description}</p>
+
+              {/* Instructions */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-foreground text-lg">Instructions:</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border whitespace-pre-line">
+                  {game.instructions}
+                </p>
+              </div>
+
+              {/* Tags */}
+              <div className="space-y-3">
+                <h4 className="font-semibold text-foreground text-lg">Tags:</h4>
+                <div className="flex flex-wrap gap-2">
+                  {game.tags.map((tag) => (
+                    <Badge
+                      key={tag}
+                      variant="outline"
+                      className="border-glass-border bg-glass-secondary/50 hover:bg-glass-primary transition-colors px-3 py-1"
+                    >
+                      {tag}
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
         </div>
       </div>
     </div>
