@@ -1,9 +1,12 @@
-import React, { useEffect, useRef } from 'react';
+import { useEffect, useRef } from 'react';
+import { Maximize } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 
 interface GameLoaderProps {
   game: {
     title: string;
-    url: string;
+    folder: string;
+    thumbnail: string;
   };
   isFullscreen: boolean;
   onEnterFullscreen: () => void;
@@ -18,18 +21,16 @@ export const GameLoader: React.FC<GameLoaderProps> = ({
 }) => {
   const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  useEffect(() => {
-    if (isFullscreen) {
-      const element = iframeRef.current?.parentElement;
-      if (element?.requestFullscreen) {
-        element.requestFullscreen();
-      }
-    } else {
-      if (document.fullscreenElement) {
-        document.exitFullscreen();
-      }
+  // Handle fullscreen toggle
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement && iframeRef.current) {
+      iframeRef.current.requestFullscreen();
+      onEnterFullscreen();
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen();
+      onExitFullscreen();
     }
-  }, [isFullscreen]);
+  };
 
   useEffect(() => {
     const handleFullscreenChange = () => {
@@ -37,6 +38,7 @@ export const GameLoader: React.FC<GameLoaderProps> = ({
         onExitFullscreen();
       }
     };
+
     document.addEventListener('fullscreenchange', handleFullscreenChange);
     return () => {
       document.removeEventListener('fullscreenchange', handleFullscreenChange);
@@ -44,12 +46,37 @@ export const GameLoader: React.FC<GameLoaderProps> = ({
   }, [onExitFullscreen]);
 
   return (
-    <iframe
-      ref={iframeRef}
-      src={game.url}
-      title={game.title}
-      className="w-full h-full rounded-lg border border-glass-border"
-      allowFullScreen
-    ></iframe>
+    <div className="relative w-full aspect-[16/9] bg-black rounded-xl overflow-hidden">
+      {/* Game iframe */}
+      <iframe
+        ref={iframeRef}
+        src={`/games/${game.folder}/index.html`}
+        title={game.title}
+        className="absolute inset-0 w-full h-full"
+        allowFullScreen
+      ></iframe>
+
+      {/* Bottom Bar */}
+      {!isFullscreen && (
+        <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-md flex items-center justify-between p-3">
+          <div className="flex items-center gap-3">
+            <img
+              src={game.thumbnail}
+              alt={game.title}
+              className="w-8 h-8 rounded object-cover"
+            />
+            <span className="text-white font-semibold text-sm">{game.title}</span>
+          </div>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={toggleFullscreen}
+            className="text-white hover:bg-white/10"
+          >
+            <Maximize className="w-5 h-5" />
+          </Button>
+        </div>
+      )}
+    </div>
   );
 };
