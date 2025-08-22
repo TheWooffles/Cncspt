@@ -61,18 +61,39 @@ const GamePage = () => {
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Top Row: Game + Related */}
         <div className="grid grid-cols-12 gap-8">
-          {/* Game Container */}
-          <div className="col-span-12 lg:col-span-8 px-2 lg:px-0">
-            <Card className="group bg-gradient-card backdrop-blur-glass border-glass-border animate-fade-in shadow-glass hover:shadow-glow transition-all duration-300 h-full">
-              <CardContent className="p-4 flex flex-col h-full">
-                <GameLoader
-                  game={game}
-                  isFullscreen={isFullscreen}
-                  onToggleFullscreen={toggleFullscreen}
-                />
-              </CardContent>
-            </Card>
-          </div>
+{/* Game Container */}
+<div className="col-span-12 lg:col-span-8 px-2 lg:px-0">
+  <Card className="group bg-gradient-card backdrop-blur-glass border-glass-border animate-fade-in shadow-glass hover:shadow-glow transition-all duration-300 h-full flex flex-col">
+    {/* Top Bar */}
+    <div className="flex items-center justify-between bg-glass-secondary/30 border-b border-glass-border p-2 px-4 rounded-t-lg">
+      <div className="flex items-center gap-3">
+        <img
+          src={game.thumbnail}
+          alt={game.title}
+          className="w-10 h-10 object-cover rounded-md"
+        />
+        <h5 className="text-foreground font-semibold text-lg">{game.title}</h5>
+      </div>
+      <Button
+        onClick={toggleFullscreen}
+        variant="outline"
+        className="text-foreground hover:bg-glass-primary px-3 py-1 text-sm"
+      >
+        {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
+      </Button>
+    </div>
+
+    {/* Game Frame */}
+    <CardContent className="p-0 flex-1">
+      <GameLoader
+        game={game}
+        isFullscreen={isFullscreen}
+        onToggleFullscreen={toggleFullscreen}
+      />
+    </CardContent>
+  </Card>
+</div>
+
 
           {/* Related Games */}
           <div className="col-span-12 lg:col-span-4 px-2 lg:px-0">
