@@ -31,4 +31,14 @@ export const gamesData: Game[] = [
     folder: 'racing-thunder',
     featured: true,
   },
+  {
+    id: '4',
+    title: 'Basket Random',
+    description: 'Basketball Game',
+    instructions: 'Plays',
+    thumbnail: '/games/Basket/splash.jpeg',
+    tags: ['strategy', 'action', 'speed'],
+    folder: 'Basket',
+    featured: true,
+  },
 ];
