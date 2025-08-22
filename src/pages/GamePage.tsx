@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Maximize, Minimize } from 'lucide-react';
 import { gamesData } from '@/data/games';
 import { useState } from 'react';
 import { GameLoader } from '@/components/GameLoader';
@@ -61,39 +61,46 @@ const GamePage = () => {
       <div className="container mx-auto px-4 py-8 space-y-8">
         {/* Top Row: Game + Related */}
         <div className="grid grid-cols-12 gap-8">
-{/* Game Container */}
-<div className="col-span-12 lg:col-span-8 px-2 lg:px-0">
-  <Card className="group bg-gradient-card backdrop-blur-glass border-glass-border animate-fade-in shadow-glass hover:shadow-glow transition-all duration-300 h-full flex flex-col">
-    {/* Top Bar */}
-    <div className="flex items-center justify-between bg-glass-secondary/30 border-b border-glass-border p-2 px-4 rounded-t-lg">
-      <div className="flex items-center gap-3">
-        <img
-          src={game.thumbnail}
-          alt={game.title}
-          className="w-10 h-10 object-cover rounded-md"
-        />
-        <h5 className="text-foreground font-semibold text-lg">{game.title}</h5>
-      </div>
-      <Button
-        onClick={toggleFullscreen}
-        variant="outline"
-        className="text-foreground hover:bg-glass-primary px-3 py-1 text-sm"
-      >
-        {isFullscreen ? 'Exit Fullscreen' : 'Fullscreen'}
-      </Button>
-    </div>
+          {/* Game Container */}
+          <div className="col-span-12 lg:col-span-8 px-2 lg:px-0">
+            <Card className="group bg-gradient-card backdrop-blur-glass border-glass-border animate-fade-in shadow-glass hover:shadow-glow transition-all duration-300 h-full flex flex-col">
+              {/* Game Frame */}
+              <CardContent className="p-0 flex-1 relative">
+                <GameLoader
+                  game={game}
+                  isFullscreen={isFullscreen}
+                  onToggleFullscreen={toggleFullscreen}
+                />
 
-    {/* Game Frame */}
-    <CardContent className="p-0 flex-1">
-      <GameLoader
-        game={game}
-        isFullscreen={isFullscreen}
-        onToggleFullscreen={toggleFullscreen}
-      />
-    </CardContent>
-  </Card>
-</div>
-
+                {/* Bottom Bar */}
+                <div className="absolute bottom-0 left-0 w-full bg-glass-secondary/40 border-t border-glass-border backdrop-blur-sm flex items-center justify-between px-4 py-2">
+                  <div className="flex items-center gap-3">
+                    <img
+                      src={game.thumbnail}
+                      alt={game.title}
+                      className="w-8 h-8 object-cover rounded-md"
+                    />
+                    <h5 className="text-foreground font-semibold text-lg">{game.title}</h5>
+                  </div>
+                  <Button
+                    onClick={toggleFullscreen}
+                    variant="outline"
+                    className="text-foreground hover:bg-glass-primary px-3 py-1 flex items-center gap-1"
+                  >
+                    {isFullscreen ? (
+                      <>
+                        <Minimize className="w-4 h-4" /> Exit
+                      </>
+                    ) : (
+                      <>
+                        <Maximize className="w-4 h-4" /> Fullscreen
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
           {/* Related Games */}
           <div className="col-span-12 lg:col-span-4 px-2 lg:px-0">
@@ -138,7 +145,7 @@ const GamePage = () => {
             <CardHeader className="pb-4">
               <CardTitle className="text-foreground text-2xl font-bold">{game.title}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6 max-h-[50vh] overflow-y-auto">
+            <CardContent className="space-y-6">
               {/* Description */}
               <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{game.description}</p>
 
