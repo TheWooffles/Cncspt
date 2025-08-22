@@ -44,8 +44,8 @@ export const gamesData: Game[] = [
   {
     id: '2',
     title: 'Basketball Stars',
-    description: 'Step onto the court in Basketball Stars! Show off your dribbling, shooting, and dunking skills in intense 1v1 matches against AI or a friend in 2-player mode. Master quick steals, powerful shots, and fast moves to become the ultimate basketball champion!',
-    instructions: 'Single Player: Use Arrow Keys to move, X to shoot/dunk, Z to steal/block, and double-tap arrows to dash. Two Player: Player 1 uses A/D to move, W to shoot, S to steal. Player 2 uses Arrow Keys to move, Up Arrow to shoot, Down Arrow to steal.',
+    description: 'Step onto the court in Basketball Stars!\n\n• Play intense 1v1 basketball matches\n• Show off dribbling, shooting, and dunking skills\n• Compete against AI or a friend in 2-player mode\n• Master quick steals, powerful shots, and fast moves',
+    instructions: 'Single Player:\n• Move: Arrow Keys\n• Shoot/Dunk: X\n• Steal/Block: Z\n• Dash: Double-tap Arrow Key\n\nTwo Player:\n• Player 1: Move: A/D | Shoot: W | Steal: S\n• Player 2: Move: Arrow Keys | Shoot: Up Arrow | Steal: Down Arrow',
     thumbnail: '/games/basketball-stars/assets/images/basketball-stars.png',
     tags: ['basketball', 'sports', 'action', '2-Player'],
     folder: 'basketball-stars',
