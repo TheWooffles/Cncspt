@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, Maximize } from 'lucide-react';
 import { gamesData } from '@/data/games';
 import { useState } from 'react';
 import { GameLoader } from '@/components/GameLoader';
@@ -29,112 +29,118 @@ const GamePage = () => {
     );
   }
 
+  // Related games: filter by tags or similar title
+  const relatedGames = gamesData.filter(
+    (g) =>
+      g.id !== game.id &&
+      (g.tags.some((tag) => game.tags.includes(tag)) ||
+        g.title.toLowerCase().includes(game.title.toLowerCase()))
+  );
+
   return (
-    <div className="min-h-screen bg-gradient-hero">
+    <div className={`min-h-screen bg-gradient-hero ${isFullscreen ? 'overflow-hidden' : ''}`}>
       {/* Slim Header */}
       <header className="bg-background-glass backdrop-blur-glass border-b border-glass-border sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
+        <div className="container mx-auto px-4 py-2 flex items-center">
           <Button
             onClick={() => navigate('/')}
             variant="ghost"
-            className="text-foreground hover:bg-glass-primary text-sm"
+            className="text-foreground hover:bg-glass-primary"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back
+            Back to Games
           </Button>
         </div>
       </header>
 
-      {/* Main Layout */}
-      <div className="container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-        {/* Game Section */}
-        <div className="lg:col-span-2">
-          <Card className="relative bg-transparent shadow-none border-none" id="game-container">
-            <CardContent className="p-0">
-              <GameLoader
-                game={game}
-                isFullscreen={isFullscreen}
-                onExitFullscreen={() => setIsFullscreen(false)}
-                onEnterFullscreen={() => setIsFullscreen(true)}
-              />
-            </CardContent>
-          </Card>
-        </div>
+      <div className="container mx-auto px-4 py-6">
+        <div className="grid lg:grid-cols-3 gap-8">
+          {/* Game Container */}
+          <div className="lg:col-span-2 flex flex-col">
+            <Card className="relative bg-transparent shadow-none border-none">
+              <CardContent className="p-0 relative">
+                <GameLoader
+                  game={game}
+                  isFullscreen={isFullscreen}
+                  onExitFullscreen={() => setIsFullscreen(false)}
+                  onEnterFullscreen={() => setIsFullscreen(true)}
+                />
+              </CardContent>
+            </Card>
 
+            {/* Game Info */}
+            <div className="mt-4">
+              <Card className="bg-gradient-card backdrop-blur-glass border-glass-border shadow-glass">
+                <CardHeader className="pb-4">
+                  <CardTitle className="text-foreground text-2xl font-bold">{game.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-6">
+                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {game.description}
+                  </p>
 
-        {/* Related Games */}
-        <div>
-          <Card className="bg-gradient-card backdrop-blur-glass border-glass-border shadow-glass">
-            <CardHeader>
-              <CardTitle className="text-foreground text-xl font-bold">Related Games</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {gamesData
-                  .filter(
-                    (g) =>
-                      g.id !== game.id &&
-                      (g.tags.some((tag) => game.tags.includes(tag)) ||
-                        g.title.toLowerCase().includes(game.title.toLowerCase()))
-                  )
-                  .slice(0, 6)
-                  .map((related) => (
-                    <div
-                      key={related.id}
-                      className="flex items-center gap-3 cursor-pointer hover:bg-glass-primary p-2 rounded-lg transition"
-                      onClick={() => navigate(`/game/${related.id}`)}
-                    >
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-foreground text-lg">Instructions:</h4>
+                    <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border whitespace-pre-line">
+                      {game.instructions}
+                    </p>
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-foreground text-lg">Tags:</h4>
+                    <div className="flex flex-wrap gap-2">
+                      {game.tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="outline"
+                          className="border-glass-border bg-glass-secondary/50 hover:bg-glass-primary transition-colors px-3 py-1"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+
+          {/* Related Games */}
+          <div>
+            <h4 className="text-foreground text-xl font-semibold mb-4">Related Games</h4>
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+              {relatedGames.map((related) => (
+                <Card
+                  key={related.id}
+                  className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-glow transition-all"
+                  onClick={() => navigate(`/game/${related.id}`)}
+                >
+                  <div className="flex flex-col gap-2">
+                    <div className="flex items-center gap-3">
                       <img
                         src={related.thumbnail}
                         alt={related.title}
-                        className="w-14 h-14 rounded-lg object-cover"
+                        className="w-16 h-16 object-cover rounded-md"
                       />
-                      <div>
-                        <p className="text-foreground font-semibold">{related.title}</p>
-                        <p className="text-xs text-muted-foreground">
-                          {related.tags.slice(0, 2).join(', ')}
-                        </p>
-                      </div>
+                      <h5 className="text-foreground font-semibold">{related.title}</h5>
                     </div>
-                  ))}
-              </div>
-            </CardContent>
-          </Card>
+                    <div className="flex flex-wrap gap-1">
+                      {related.tags.map((tag) => (
+                        <Badge
+                          key={tag}
+                          variant="outline"
+                          className="text-xs border-glass-border bg-glass-secondary/50 px-2 py-0.5"
+                        >
+                          {tag}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </Card>
+              ))}
+            </div>
+          </div>
         </div>
-      </div>
-
-      {/* Game Info Section (Solid Background) */}
-      <div className="container mx-auto px-4 py-8">
-        <Card className="bg-background border border-border shadow-md rounded-xl">
-          <CardHeader>
-            <CardTitle className="text-foreground text-2xl font-bold">{game.title}</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <p className="text-muted-foreground leading-relaxed">{game.description}</p>
-
-            <div className="space-y-3">
-              <h4 className="font-semibold text-foreground text-lg">Instructions:</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed bg-secondary/10 p-4 rounded-lg border border-border">
-                {game.instructions}
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              <h4 className="font-semibold text-foreground text-lg">Tags:</h4>
-              <div className="flex flex-wrap gap-2">
-                {game.tags.map((tag) => (
-                  <Badge
-                    key={tag}
-                    variant="outline"
-                    className="border-border bg-secondary/20 hover:bg-secondary transition-colors px-3 py-1"
-                  >
-                    {tag}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

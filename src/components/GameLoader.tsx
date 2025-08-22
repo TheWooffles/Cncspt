@@ -1,58 +1,96 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Minimize, Maximize } from 'lucide-react';
+import { Maximize, Minimize } from 'lucide-react';
+import { Game } from '@/types/game';
 
 interface GameLoaderProps {
-  game: {
-    title: string;
-    folder: string;
-    thumbnail: string;
-  };
+  game: Game;
   isFullscreen: boolean;
-  onExitFullscreen: () => void;
   onEnterFullscreen: () => void;
+  onExitFullscreen: () => void;
 }
 
-export const GameLoader = ({ game, isFullscreen, onExitFullscreen, onEnterFullscreen }: GameLoaderProps) => {
+export const GameLoader = ({
+  game,
+  isFullscreen,
+  onEnterFullscreen,
+  onExitFullscreen,
+}: GameLoaderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [pseudoFS, setPseudoFS] = useState(false);
 
-  const requestFullscreen = async () => {
-    if (containerRef.current && containerRef.current.requestFullscreen) {
-      await containerRef.current.requestFullscreen();
-    }
-  };
+  // Handle fullscreen toggle
+  const toggleFullscreen = async () => {
+    const container = containerRef.current;
+    if (!container) return;
 
-  const exitFullscreen = async () => {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
-    }
-  };
-
-  useEffect(() => {
-    if (isFullscreen) {
-      requestFullscreen();
+    if (!document.fullscreenElement) {
+      try {
+        await container.requestFullscreen();
+        onEnterFullscreen();
+      } catch {
+        setPseudoFS(true);
+        onEnterFullscreen();
+        document.documentElement.style.overflow = 'hidden';
+      }
     } else {
-      exitFullscreen();
+      if (document.exitFullscreen) await document.exitFullscreen();
+      setPseudoFS(false);
+      onExitFullscreen();
+      document.documentElement.style.removeProperty('overflow');
     }
-  }, [isFullscreen]);
+  };
+
+  // ESC key handling
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        if (pseudoFS) {
+          setPseudoFS(false);
+          onExitFullscreen();
+          document.documentElement.style.removeProperty('overflow');
+        }
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => document.removeEventListener('keydown', onKey);
+  }, [pseudoFS, onExitFullscreen]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-[600px] bg-black">
-      <iframe
-        src={`/games/${game.folder}/index.html`}
-        title={game.title}
-        className="w-full h-full border-none"
-        allowFullScreen
-      ></iframe>
-
-      {/* Exit Fullscreen Button */}
-      {isFullscreen && (
-        <div className="absolute top-3 left-3 z-50">
+    <div
+      ref={containerRef}
+      className={`relative w-full rounded-lg overflow-hidden ${
+        pseudoFS ? 'fixed inset-0 z-50 bg-black' : ''
+      }`}
+      style={{ aspectRatio: '16/9' }}
+    >
+      {/* Bottom Bar */}
+      {!isFullscreen && !pseudoFS && (
+        <div className="absolute bottom-0 left-0 right-0 bg-background-glass backdrop-blur-glass border-t border-glass-border flex items-center justify-between px-4 py-2">
+          <div className="flex items-center gap-3">
+            <img
+              src={game.thumbnail}
+              alt={game.title}
+              className="w-10 h-10 rounded object-cover"
+            />
+            <h3 className="text-lg font-semibold text-foreground">{game.title}</h3>
+          </div>
           <Button
-            onClick={async () => {
-              await exitFullscreen();
-              onExitFullscreen();
-            }}
+            onClick={toggleFullscreen}
+            variant="outline"
+            size="icon"
+            className="bg-background-glass border-glass-border hover:bg-glass-primary"
+          >
+            <Maximize className="w-5 h-5" />
+          </Button>
+        </div>
+      )}
+
+      {/* Exit fullscreen button */}
+      {(isFullscreen || pseudoFS) && (
+        <div className="absolute top-2 left-2 z-50">
+          <Button
+            onClick={toggleFullscreen}
             variant="outline"
             size="sm"
             className="bg-background-glass/90 backdrop-blur-glass border-glass-border hover:bg-glass-primary shadow-lg"
@@ -63,27 +101,13 @@ export const GameLoader = ({ game, isFullscreen, onExitFullscreen, onEnterFullsc
         </div>
       )}
 
-      {/* Bottom Bar */}
-      {!isFullscreen && (
-        <div className="absolute bottom-0 left-0 w-full bg-background-glass/90 backdrop-blur-glass border-t border-glass-border flex items-center justify-between px-4 py-3">
-          <div className="flex items-center gap-3">
-            <img
-              src={game.thumbnail}
-              alt={game.title}
-              className="w-8 h-8 rounded object-cover border border-glass-border"
-            />
-            <span className="text-foreground font-semibold">{game.title}</span>
-          </div>
-          <Button
-            onClick={() => onEnterFullscreen()}
-            variant="outline"
-            size="sm"
-            className="bg-background-glass hover:bg-glass-primary"
-          >
-            <Maximize className="w-4 h-4 mr-2" /> Fullscreen
-          </Button>
-        </div>
-      )}
+      <iframe
+        src={`/games/${game.folder}/index.html`}
+        title={game.title}
+        className="w-full h-full border-0"
+        allowFullScreen
+        allow="fullscreen *; gamepad; autoplay; microphone; camera"
+      />
     </div>
   );
 };
