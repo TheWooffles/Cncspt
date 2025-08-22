@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Maximize, Minimize } from 'lucide-react';
+import { ArrowLeft, Maximize } from 'lucide-react';
 import { gamesData } from '@/data/games';
 import { useState } from 'react';
 import { GameLoader } from '@/components/GameLoader';
@@ -13,6 +13,7 @@ const GamePage = () => {
   const [isFullscreen, setIsFullscreen] = useState(false);
 
   const game = gamesData.find((g) => g.id === id);
+
   if (!game) {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
@@ -28,20 +29,8 @@ const GamePage = () => {
     );
   }
 
-  const toggleFullscreen = () => {
-    setIsFullscreen(!isFullscreen);
-  };
-
-  // Related games (filter by tags or similar title)
-  const relatedGames = gamesData.filter(
-    (g) =>
-      g.id !== game.id &&
-      (g.tags.some((tag) => game.tags.includes(tag)) ||
-        g.title.toLowerCase().includes(game.title.toLowerCase()))
-  );
-
   return (
-    <div className={`min-h-screen bg-gradient-hero ${isFullscreen ? 'overflow-hidden' : ''}`}>
+    <div className="min-h-screen bg-gradient-hero">
       {/* Header */}
       <header className="bg-background-glass backdrop-blur-glass border-b border-glass-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-4 flex justify-between items-center">
@@ -53,132 +42,112 @@ const GamePage = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Games
           </Button>
-          <Button
-            onClick={toggleFullscreen}
-            variant="outline"
-            size="sm"
-            className="bg-background-glass border-glass-border hover:bg-glass-primary"
-          >
-            {isFullscreen ? (
-              <>
-                <Minimize className="w-4 h-4 mr-2" /> Exit Fullscreen
-              </>
-            ) : (
-              <>
-                <Maximize className="w-4 h-4 mr-2" /> Fullscreen
-              </>
-            )}
-          </Button>
+
+          {/* Only show Enter Fullscreen button if not already fullscreen */}
+          {!isFullscreen && (
+            <Button
+              onClick={() => setIsFullscreen(true)}
+              variant="outline"
+              size="sm"
+              className="bg-background-glass border-glass-border hover:bg-glass-primary"
+            >
+              <Maximize className="w-4 h-4 mr-2" /> Fullscreen
+            </Button>
+          )}
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-8 space-y-8" id="game-page-container">
-        <div className="grid grid-cols-12 gap-8">
-          {/* Game Container */}
-          <div className="col-span-12 lg:col-span-8">
-            <Card className="bg-gradient-card backdrop-blur-glass border-glass-border shadow-glass flex flex-col overflow-hidden">
-              <CardContent className="p-0 relative">
-                {/* Game Frame */}
-                <div className="relative w-full aspect-[16/9] bg-black">
-                  <GameLoader game={game} isFullscreen={isFullscreen} />
-                  {/* Bottom bar inside game frame */}
-                  <div className="absolute bottom-0 left-0 right-0 bg-background-glass backdrop-blur-md border-t border-glass-border flex items-center justify-between px-4 py-2">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={game.thumbnail}
-                        alt={game.title}
-                        className="w-8 h-8 rounded object-cover"
-                      />
-                      <span className="text-foreground font-semibold">{game.title}</span>
-                    </div>
-                    <Button
-                      onClick={toggleFullscreen}
-                      variant="outline"
-                      size="icon"
-                      className="bg-background-glass border-glass-border hover:bg-glass-primary"
-                    >
-                      {isFullscreen ? (
-                        <Minimize className="w-4 h-4" />
-                      ) : (
-                        <Maximize className="w-4 h-4" />
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Related Games */}
-          <div className="col-span-12 lg:col-span-4">
-            <h4 className="text-foreground text-xl font-semibold mb-4">Related Games</h4>
-            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
-              {relatedGames.map((related) => (
-                <Card
-                  key={related.id}
-                  className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-glow transition-all"
-                  onClick={() => navigate(`/game/${related.id}`)}
-                >
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={related.thumbnail}
-                      alt={related.title}
-                      className="w-16 h-16 object-cover rounded-md"
-                    />
-                    <div>
-                      <h5 className="text-foreground font-semibold">{related.title}</h5>
-                      <div className="flex flex-wrap gap-1 mt-1">
-                        {related.tags.map((tag) => (
-                          <Badge
-                            key={tag}
-                            variant="outline"
-                            className="text-xs border-glass-border bg-glass-secondary/50 px-2 py-0.5"
-                          >
-                            {tag}
-                          </Badge>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
-          </div>
+      {/* Main Layout */}
+      <div className="container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+        {/* Game Section */}
+        <div className="lg:col-span-2">
+          <Card
+            className="relative bg-gradient-card backdrop-blur-glass border-glass-border shadow-glass animate-fade-in overflow-hidden"
+            id="game-container"
+          >
+            <CardContent className="p-0">
+              <GameLoader
+                game={game}
+                isFullscreen={isFullscreen}
+                onExitFullscreen={() => setIsFullscreen(false)}
+              />
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Game Info */}
-        <div className="col-span-12">
-          <Card className="bg-gradient-card backdrop-blur-glass border-glass-border animate-fade-in shadow-glass">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-foreground text-2xl font-bold">{game.title}</CardTitle>
+        {/* Related Games */}
+        <div>
+          <Card className="bg-gradient-card backdrop-blur-glass border-glass-border shadow-glass">
+            <CardHeader>
+              <CardTitle className="text-foreground text-xl font-bold">Related Games</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                {game.description}
-              </p>
-              <div className="space-y-3">
-                <h4 className="font-semibold text-foreground text-lg">Instructions:</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border whitespace-pre-line">
-                  {game.instructions}
-                </p>
-              </div>
-              <div className="space-y-3">
-                <h4 className="font-semibold text-foreground text-lg">Tags:</h4>
-                <div className="flex flex-wrap gap-2">
-                  {game.tags.map((tag) => (
-                    <Badge
-                      key={tag}
-                      variant="outline"
-                      className="border-glass-border bg-glass-secondary/50 hover:bg-glass-primary transition-colors px-3 py-1"
+            <CardContent>
+              <div className="space-y-4">
+                {gamesData
+                  .filter(
+                    (g) =>
+                      g.id !== game.id &&
+                      (g.tags.some((tag) => game.tags.includes(tag)) ||
+                        g.title.toLowerCase().includes(game.title.toLowerCase()))
+                  )
+                  .slice(0, 6)
+                  .map((related) => (
+                    <div
+                      key={related.id}
+                      className="flex items-center gap-3 cursor-pointer hover:bg-glass-primary p-2 rounded-lg transition"
+                      onClick={() => navigate(`/game/${related.id}`)}
                     >
-                      {tag}
-                    </Badge>
+                      <img
+                        src={related.thumbnail}
+                        alt={related.title}
+                        className="w-14 h-14 rounded-lg object-cover"
+                      />
+                      <div>
+                        <p className="text-foreground font-semibold">{related.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          {related.tags.slice(0, 2).join(', ')}
+                        </p>
+                      </div>
+                    </div>
                   ))}
-                </div>
               </div>
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Game Info Section */}
+      <div className="container mx-auto px-4 py-8">
+        <Card className="bg-gradient-card backdrop-blur-glass border-glass-border shadow-glass">
+          <CardHeader>
+            <CardTitle className="text-foreground text-2xl font-bold">{game.title}</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <p className="text-muted-foreground leading-relaxed">{game.description}</p>
+
+            <div className="space-y-3">
+              <h4 className="font-semibold text-foreground text-lg">Instructions:</h4>
+              <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border">
+                {game.instructions}
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <h4 className="font-semibold text-foreground text-lg">Tags:</h4>
+              <div className="flex flex-wrap gap-2">
+                {game.tags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="outline"
+                    className="border-glass-border bg-glass-secondary/50 hover:bg-glass-primary transition-colors px-3 py-1"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );

@@ -1,129 +1,58 @@
-import { useState, useEffect, useRef } from 'react';
-import { Loader2, AlertCircle, Minimize } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
-import { Game } from '@/types/game';
+import { Minimize } from 'lucide-react';
 
 interface GameLoaderProps {
-  game: Game;
+  game: {
+    title: string;
+    folder: string;
+    thumbnail: string;
+  };
   isFullscreen: boolean;
-  onToggleFullscreen: () => void;
+  onExitFullscreen: () => void;
 }
 
-export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoaderProps) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [hasError, setHasError] = useState(false);
-  const [loadProgress, setLoadProgress] = useState(0);
-  const [pseudoFS, setPseudoFS] = useState(false);
-
-  const iframeRef = useRef<HTMLIFrameElement>(null);
+export const GameLoader = ({ game, isFullscreen, onExitFullscreen }: GameLoaderProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const isUnityGame = game.tags.includes('Unity') || game.folder.includes('unity');
-
-  useEffect(() => {
-    const t = setTimeout(() => setIsLoading(false), 2000);
-    const interval = setInterval(() => {
-      setLoadProgress(prev => {
-        if (prev >= 100) {
-          clearInterval(interval);
-          return 100;
-        }
-        return prev + Math.random() * 15;
-      });
-    }, 200);
-    return () => {
-      clearTimeout(t);
-      clearInterval(interval);
-    };
-  }, []);
-
-  const handleIframeLoad = () => {
-    setIsLoading(false);
-    setLoadProgress(100);
+  // Request fullscreen for the container
+  const requestFullscreen = async () => {
+    if (containerRef.current && containerRef.current.requestFullscreen) {
+      await containerRef.current.requestFullscreen();
+    }
   };
 
-  const handleIframeError = () => {
-    setIsLoading(false);
-    setHasError(true);
-  };
-
-  const getFullscreenElement = () =>
-    document.fullscreenElement ||
-    // @ts-ignore
-    document.webkitFullscreenElement ||
-    // @ts-ignore
-    document.mozFullScreenElement ||
-    // @ts-ignore
-    document.msFullscreenElement;
-
-  const exitDocFullscreen = async () => {
-    try {
-      if (document.exitFullscreen) return await document.exitFullscreen();
-      // @ts-ignore
-      if (document.webkitExitFullscreen) return document.webkitExitFullscreen();
-      // @ts-ignore
-      if (document.mozCancelFullScreen) return document.mozCancelFullScreen();
-      // @ts-ignore
-      if (document.msExitFullscreen) return document.msExitFullscreen();
-    } catch {}
+  // Exit fullscreen
+  const exitFullscreen = async () => {
+    if (document.fullscreenElement) {
+      await document.exitFullscreen();
+    }
   };
 
   useEffect(() => {
-    const sync = () => {
-      const active = getFullscreenElement() === containerRef.current;
-      if (active !== isFullscreen) onToggleFullscreen();
-      if (!active) setPseudoFS(false);
-    };
+    if (isFullscreen) {
+      requestFullscreen();
+    } else {
+      exitFullscreen();
+    }
+  }, [isFullscreen]);
 
-    const evts = ['fullscreenchange', 'webkitfullscreenchange', 'mozfullscreenchange', 'MSFullscreenChange'] as const;
-    evts.forEach(evt => document.addEventListener(evt, sync));
-    return () => {
-      evts.forEach(evt => document.removeEventListener(evt, sync));
-    };
-  }, [isFullscreen, onToggleFullscreen]);
+  return (
+    <div ref={containerRef} className="relative w-full h-[600px] bg-black">
+      <iframe
+        src={`/games/${game.folder}/index.html`}
+        title={game.title}
+        className="w-full h-full border-none"
+        allowFullScreen
+      ></iframe>
 
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Escape') return;
-      if (getFullscreenElement()) exitDocFullscreen().catch(() => {});
-      else if (pseudoFS) {
-        setPseudoFS(false);
-        if (isFullscreen) onToggleFullscreen();
-        document.documentElement.style.removeProperty('overflow');
-      }
-    };
-    document.addEventListener('keydown', onKey);
-    return () => document.removeEventListener('keydown', onKey);
-  }, [pseudoFS, isFullscreen, onToggleFullscreen]);
-
-  return hasError ? (
-    <div className="flex items-center justify-center h-full min-h-[400px] bg-gradient-card backdrop-blur-glass border-glass-border rounded-lg">
-      <div className="text-center space-y-4">
-        <AlertCircle className="w-12 h-12 text-destructive mx-auto" />
-        <h3 className="text-lg font-semibold text-foreground">Failed to Load Game</h3>
-        <p className="text-muted-foreground">The game could not be loaded. Please try again later.</p>
-        <Button
-          onClick={() => window.location.reload()}
-          variant="outline"
-          className="bg-background-glass border-glass-border hover:bg-glass-primary"
-        >
-          Retry
-        </Button>
-      </div>
-    </div>
-  ) : (
-    <div className="space-y-4">
-      {/* Only exit fullscreen button inside the container */}
-      {(isFullscreen || pseudoFS) && (
-        <div className="absolute top-2 left-2 z-50">
+      {/* Exit Fullscreen Button */}
+      {isFullscreen && (
+        <div className="absolute top-3 left-3 z-50">
           <Button
             onClick={async () => {
-              if (getFullscreenElement()) await exitDocFullscreen();
-              else if (pseudoFS) {
-                setPseudoFS(false);
-                document.documentElement.style.removeProperty('overflow');
-                if (isFullscreen) onToggleFullscreen();
-              }
+              await exitFullscreen();
+              onExitFullscreen();
             }}
             variant="outline"
             size="sm"
@@ -134,48 +63,6 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
           </Button>
         </div>
       )}
-
-      <div
-        ref={containerRef}
-        className={[
-          'relative rounded-lg overflow-hidden bg-gradient-card backdrop-blur-glass border-glass-border',
-          !(isFullscreen || pseudoFS) ? 'aspect-video' : '',
-          pseudoFS ? 'fixed inset-0 z-50 bg-black' : '',
-        ].join(' ')}
-        tabIndex={-1}
-      >
-        {isLoading && (
-          <div className="absolute inset-0 bg-gradient-card/90 backdrop-blur-glass flex flex-col items-center justify-center z-40">
-            <div className="text-center space-y-4">
-              <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto" />
-              <div className="space-y-2">
-                <h3 className="text-lg font-semibold text-foreground">
-                  {isUnityGame ? 'Loading Unity Game...' : 'Loading Game...'}
-                </h3>
-                <div className="w-64 h-2 bg-background-light rounded-full overflow-hidden">
-                  <div
-                    className="h-full bg-gradient-primary transition-all duration-300 ease-out"
-                    style={{ width: `${Math.min(loadProgress, 100)}%` }}
-                  />
-                </div>
-                <p className="text-sm text-muted-foreground">{Math.round(Math.min(loadProgress, 100))}%</p>
-              </div>
-            </div>
-          </div>
-        )}
-
-        <iframe
-          ref={iframeRef}
-          src={`/games/${game.folder}/index.html`}
-          className="w-full h-full border-0"
-          title={game.title}
-          allowFullScreen
-          allow="fullscreen *; gamepad; autoplay; microphone; camera"
-          onLoad={handleIframeLoad}
-          onError={handleIframeError}
-          style={{ background: isUnityGame ? '#000' : 'transparent' }}
-        />
-      </div>
     </div>
   );
 };
