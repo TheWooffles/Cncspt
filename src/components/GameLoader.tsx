@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
+import { Maximize } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Minimize, Maximize } from 'lucide-react';
 
 interface GameLoaderProps {
   game: {
@@ -9,78 +9,71 @@ interface GameLoaderProps {
     thumbnail: string;
   };
   isFullscreen: boolean;
-  onExitFullscreen: () => void;
   onEnterFullscreen: () => void;
+  onExitFullscreen: () => void;
 }
 
-export const GameLoader = ({ game, isFullscreen, onExitFullscreen, onEnterFullscreen }: GameLoaderProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+export const GameLoader: React.FC<GameLoaderProps> = ({
+  game,
+  isFullscreen,
+  onEnterFullscreen,
+  onExitFullscreen,
+}) => {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
 
-  const requestFullscreen = async () => {
-    if (containerRef.current && containerRef.current.requestFullscreen) {
-      await containerRef.current.requestFullscreen();
-    }
-  };
-
-  const exitFullscreen = async () => {
-    if (document.fullscreenElement) {
-      await document.exitFullscreen();
+  // Handle fullscreen toggle
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement && iframeRef.current) {
+      iframeRef.current.requestFullscreen();
+      onEnterFullscreen();
+    } else if (document.fullscreenElement) {
+      document.exitFullscreen();
+      onExitFullscreen();
     }
   };
 
   useEffect(() => {
-    if (isFullscreen) {
-      requestFullscreen();
-    } else {
-      exitFullscreen();
-    }
-  }, [isFullscreen]);
+    const handleFullscreenChange = () => {
+      if (!document.fullscreenElement) {
+        onExitFullscreen();
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [onExitFullscreen]);
 
   return (
-    <div ref={containerRef} className="relative w-full h-[600px] bg-black">
+    <div className="relative w-full aspect-[16/9] bg-black rounded-xl overflow-hidden">
+      {/* Game iframe */}
       <iframe
+        ref={iframeRef}
         src={`/games/${game.folder}/index.html`}
         title={game.title}
-        className="w-full h-full border-none"
+        className="absolute inset-0 w-full h-full"
         allowFullScreen
       ></iframe>
 
-      {/* Exit Fullscreen Button */}
-      {isFullscreen && (
-        <div className="absolute top-3 left-3 z-50">
-          <Button
-            onClick={async () => {
-              await exitFullscreen();
-              onExitFullscreen();
-            }}
-            variant="outline"
-            size="sm"
-            className="bg-background-glass/90 backdrop-blur-glass border-glass-border hover:bg-glass-primary shadow-lg"
-          >
-            <Minimize className="w-3 h-3 mr-1" />
-            <span className="text-xs">Exit</span>
-          </Button>
-        </div>
-      )}
-
       {/* Bottom Bar */}
       {!isFullscreen && (
-        <div className="absolute bottom-0 left-0 w-full bg-background-glass/90 backdrop-blur-glass border-t border-glass-border flex items-center justify-between px-4 py-3">
+        <div className="absolute bottom-0 left-0 right-0 bg-black/70 backdrop-blur-md flex items-center justify-between p-3">
           <div className="flex items-center gap-3">
             <img
               src={game.thumbnail}
               alt={game.title}
-              className="w-8 h-8 rounded object-cover border border-glass-border"
+              className="w-8 h-8 rounded object-cover"
             />
-            <span className="text-foreground font-semibold">{game.title}</span>
+            <span className="text-white font-semibold text-sm">{game.title}</span>
           </div>
           <Button
-            onClick={() => onEnterFullscreen()}
-            variant="outline"
-            size="sm"
-            className="bg-background-glass hover:bg-glass-primary"
+            variant="ghost"
+            size="icon"
+            onClick={toggleFullscreen}
+            className="text-white hover:bg-white/10"
           >
-            <Maximize className="w-4 h-4 mr-2" /> Fullscreen
+            <Maximize className="w-5 h-5" />
           </Button>
         </div>
       )}
