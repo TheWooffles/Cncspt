@@ -58,15 +58,19 @@ const GamePage = () => {
             <CardHeader className="pb-4">
               <CardTitle className="text-foreground text-2xl font-bold">{game.title}</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <p className="text-muted-foreground leading-relaxed">{game.description}</p>
-              
-              <div className="space-y-3">
-                <h4 className="font-semibold text-foreground text-lg">Instructions:</h4>
-                <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border">
-                  {game.instructions}
+              <CardContent className="space-y-6">
+                <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                  {game.description}
                 </p>
-              </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-foreground text-lg">Instructions:</h4>
+                  <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border whitespace-pre-line">
+                    {game.instructions}
+                  </p>
+                </div>
+              </CardContent>
+
 
               <div className="space-y-3">
                 <h4 className="font-semibold text-foreground text-lg">Tags:</h4>
