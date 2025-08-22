@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Maximize } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { gamesData } from '@/data/games';
 import { useState } from 'react';
 import { GameLoader } from '@/components/GameLoader';
@@ -31,49 +31,36 @@ const GamePage = () => {
 
   return (
     <div className="min-h-screen bg-gradient-hero">
-      {/* Header */}
+      {/* Slim Header */}
       <header className="bg-background-glass backdrop-blur-glass border-b border-glass-border sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
+        <div className="container mx-auto px-4 py-2 flex justify-between items-center">
           <Button
             onClick={() => navigate('/')}
             variant="ghost"
-            className="text-foreground hover:bg-glass-primary"
+            className="text-foreground hover:bg-glass-primary text-sm"
           >
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Games
+            Back
           </Button>
-
-          {/* Only show Enter Fullscreen button if not already fullscreen */}
-          {!isFullscreen && (
-            <Button
-              onClick={() => setIsFullscreen(true)}
-              variant="outline"
-              size="sm"
-              className="bg-background-glass border-glass-border hover:bg-glass-primary"
-            >
-              <Maximize className="w-4 h-4 mr-2" /> Fullscreen
-            </Button>
-          )}
         </div>
       </header>
 
       {/* Main Layout */}
-      <div className="container mx-auto px-4 py-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
+      <div className="container mx-auto px-4 py-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Game Section */}
         <div className="lg:col-span-2">
-          <Card
-            className="relative bg-gradient-card backdrop-blur-glass border-glass-border shadow-glass animate-fade-in overflow-hidden"
-            id="game-container"
-          >
+          <Card className="relative bg-transparent shadow-none border-none" id="game-container">
             <CardContent className="p-0">
               <GameLoader
                 game={game}
                 isFullscreen={isFullscreen}
                 onExitFullscreen={() => setIsFullscreen(false)}
+                onEnterFullscreen={() => setIsFullscreen(true)}
               />
             </CardContent>
           </Card>
         </div>
+
 
         {/* Related Games */}
         <div>
