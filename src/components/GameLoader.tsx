@@ -93,77 +93,125 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
     );
   }
 
-  return (
-    <div 
-      ref={containerRef}
-      className={`relative ${isFullscreen ? 'fixed inset-0 z-50 bg-black' : 'aspect-video rounded-lg overflow-hidden'}`}
-    >
-      {/* Loading Overlay */}
-      {isLoading && (
-        <div className="absolute inset-0 bg-gradient-card backdrop-blur-glass border-glass-border rounded-lg flex flex-col items-center justify-center z-10">
-          <div className="text-center space-y-4">
-            <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto" />
-            <div className="space-y-2">
-              <h3 className="text-lg font-semibold text-foreground">
-                {isUnityGame ? 'Loading Unity Game...' : 'Loading Game...'}
-              </h3>
-              <div className="w-64 h-2 bg-background-light rounded-full overflow-hidden">
-                <div 
-                  className="h-full bg-gradient-primary transition-all duration-300 ease-out"
-                  style={{ width: `${Math.min(loadProgress, 100)}%` }}
-                />
-              </div>
-              <p className="text-sm text-muted-foreground">
-                {Math.round(Math.min(loadProgress, 100))}%
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Fullscreen Controls */}
-      {isFullscreen && (
-        <div className="absolute top-4 right-4 z-20">
+  if (isFullscreen) {
+    return (
+      <div 
+        ref={containerRef}
+        className="fixed inset-0 z-50 bg-black flex flex-col"
+      >
+        {/* Fullscreen Exit Button - Positioned in top-left corner away from game area */}
+        <div className="absolute top-2 left-2 z-50">
           <Button
             onClick={exitFullscreen}
             variant="outline"
             size="sm"
-            className="bg-background-glass/80 backdrop-blur-glass border-glass-border hover:bg-glass-primary"
+            className="bg-background-glass/90 backdrop-blur-glass border-glass-border hover:bg-glass-primary shadow-lg"
           >
-            <Minimize className="w-4 h-4 mr-2" />
-            Exit Fullscreen
+            <Minimize className="w-3 h-3 mr-1" />
+            <span className="text-xs">Exit</span>
           </Button>
         </div>
-      )}
 
-      {/* Game iframe */}
-      <iframe
-        ref={iframeRef}
-        src={`/games/${game.folder}/index.html`}
-        className={`border-0 ${isFullscreen ? 'w-full h-full' : 'w-full h-full'}`}
-        title={game.title}
-        allowFullScreen
-        allow="gamepad; microphone; camera"
-        onLoad={handleIframeLoad}
-        onError={handleIframeError}
-        style={{
-          background: isUnityGame ? '#000' : 'transparent',
-        }}
-      />
+        {/* Loading Overlay for Fullscreen */}
+        {isLoading && (
+          <div className="absolute inset-0 bg-black/90 backdrop-blur-glass flex flex-col items-center justify-center z-40">
+            <div className="text-center space-y-4">
+              <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto" />
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold text-white">
+                  {isUnityGame ? 'Loading Unity Game...' : 'Loading Game...'}
+                </h3>
+                <div className="w-64 h-2 bg-white/20 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-primary transition-all duration-300 ease-out"
+                    style={{ width: `${Math.min(loadProgress, 100)}%` }}
+                  />
+                </div>
+                <p className="text-sm text-white/70">
+                  {Math.round(Math.min(loadProgress, 100))}%
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
 
-      {/* Fullscreen Button (when not in fullscreen) */}
-      {!isFullscreen && !isLoading && (
-        <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          <Button
-            onClick={enterFullscreen}
-            variant="outline"
-            size="sm"
-            className="bg-background-glass/80 backdrop-blur-glass border-glass-border hover:bg-glass-primary"
-          >
-            <Maximize className="w-4 h-4" />
-          </Button>
-        </div>
-      )}
+        {/* Game iframe - Full viewport */}
+        <iframe
+          ref={iframeRef}
+          src={`/games/${game.folder}/index.html`}
+          className="w-full h-full border-0 flex-1"
+          title={game.title}
+          allowFullScreen
+          allow="gamepad; microphone; camera"
+          onLoad={handleIframeLoad}
+          onError={handleIframeError}
+          style={{
+            background: isUnityGame ? '#000' : 'transparent',
+          }}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Fullscreen Button - Outside of game frame */}
+      <div className="flex justify-end">
+        <Button
+          onClick={enterFullscreen}
+          variant="outline"
+          size="sm"
+          className="bg-background-glass border-glass-border hover:bg-glass-primary transition-all duration-200 hover:scale-105"
+          disabled={isLoading}
+        >
+          <Maximize className="w-4 h-4 mr-2" />
+          Fullscreen
+        </Button>
+      </div>
+
+      {/* Game Container */}
+      <div 
+        ref={containerRef}
+        className="relative aspect-video rounded-lg overflow-hidden bg-gradient-card backdrop-blur-glass border-glass-border"
+      >
+        {/* Loading Overlay */}
+        {isLoading && (
+          <div className="absolute inset-0 bg-gradient-card backdrop-blur-glass flex flex-col items-center justify-center z-10">
+            <div className="text-center space-y-4">
+              <Loader2 className="w-12 h-12 text-primary animate-spin mx-auto" />
+              <div className="space-y-2">
+                <h3 className="text-lg font-semibold text-foreground">
+                  {isUnityGame ? 'Loading Unity Game...' : 'Loading Game...'}
+                </h3>
+                <div className="w-64 h-2 bg-background-light rounded-full overflow-hidden">
+                  <div 
+                    className="h-full bg-gradient-primary transition-all duration-300 ease-out"
+                    style={{ width: `${Math.min(loadProgress, 100)}%` }}
+                  />
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  {Math.round(Math.min(loadProgress, 100))}%
+                </p>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Game iframe */}
+        <iframe
+          ref={iframeRef}
+          src={`/games/${game.folder}/index.html`}
+          className="w-full h-full border-0"
+          title={game.title}
+          allowFullScreen
+          allow="gamepad; microphone; camera"
+          onLoad={handleIframeLoad}
+          onError={handleIframeError}
+          style={{
+            background: isUnityGame ? '#000' : 'transparent',
+          }}
+        />
+      </div>
     </div>
   );
 };
