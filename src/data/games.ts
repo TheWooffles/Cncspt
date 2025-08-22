@@ -44,8 +44,32 @@ export const gamesData: Game[] = [
   {
     id: '2',
     title: 'Basketball Stars',
-    description: 'Step onto the court in Basketball Stars!\n\n• Play intense 1v1 basketball matches\n• Show off dribbling, shooting, and dunking skills\n• Compete against AI or a friend in 2-player mode\n• Master quick steals, powerful shots, and fast moves',
-    instructions: 'Single Player:\n• Move: Arrow Keys\n• Shoot/Dunk: X\n• Steal/Block: Z\n• Dash: Double-tap Arrow Key\n\nTwo Player:\n• Player 1: Move: A/D | Shoot: W | Steal: S\n• Player 2: Move: Arrow Keys | Shoot: Up Arrow | Steal: Down Arrow',
+    description: 'Step onto the court in <strong>Basketball Stars!</strong><br><br>\
+  <ul>\
+  <li>Play intense 1v1 basketball matches</li>\
+  <li>Show off dribbling, shooting, and dunking skills</li>\
+  <li>Compete against AI or a friend in 2-player mode</li>\
+  <li>Master quick steals, powerful shots, and fast moves</li>\
+  </ul>',
+    instructions: '<strong>Single Player:</strong><br>\
+  <ul>\
+  <li>Move: Arrow Keys</li>\
+  <li>Shoot/Dunk: X</li>\
+  <li>Steal/Block: Z</li>\
+  <li>Dash: Double-tap Arrow Key</li>\
+  </ul>\
+  <strong>Two Player:</strong><br>\
+  <ul>\
+  <li>Player 1: Move: A/D | Shoot: W | Steal: S</li>\
+  <li>Player 2: Move: Arrow Keys | Shoot: Up Arrow | Steal: Down Arrow</li>\
+  </ul>\
+  <strong>Tips & Tricks:</strong><br>\
+  <ul>\
+  <li>Time your jumps to block shots</li>\
+  <li>Use quick steals when your opponent dribbles too close</li>\
+  <li>Fake out your opponent for easy shots</li>\
+  <li>Master the dash move to break free for a dunk</li>\
+  </ul>',
     thumbnail: '/games/basketball-stars/assets/images/basketball-stars.png',
     tags: ['basketball', 'sports', 'action', '2-Player'],
     folder: 'basketball-stars',
