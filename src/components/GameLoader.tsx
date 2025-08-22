@@ -18,14 +18,14 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
 
   const isUnityGame = game.tags.includes('Unity') || game.folder.includes('unity');
 
+  // Simulate loading progress
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
 
-    // Simulate loading progress
     const progressTimer = setInterval(() => {
-      setLoadProgress(prev => {
+      setLoadProgress((prev) => {
         if (prev >= 100) {
           clearInterval(progressTimer);
           return 100;
@@ -50,39 +50,71 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
     setHasError(true);
   };
 
+  /** ✅ Fullscreen handling **/
+  useEffect(() => {
+    const handleFullscreenChange = () => {
+      const isNowFullscreen = document.fullscreenElement === containerRef.current;
+      if (isNowFullscreen !== isFullscreen) {
+        onToggleFullscreen(); // Sync React state with actual DOM fullscreen state
+      }
+    };
+
+    document.addEventListener('fullscreenchange', handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener('fullscreenchange', handleFullscreenChange);
+    };
+  }, [isFullscreen, onToggleFullscreen]);
+
+  /** ✅ ESC key exit fullscreen **/
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape' && document.fullscreenElement) {
+        document.exitFullscreen().catch((err) =>
+          console.error('Failed to exit fullscreen:', err)
+        );
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   const enterFullscreen = async () => {
-    if (containerRef.current) {
+    if (containerRef.current && !document.fullscreenElement) {
       try {
-        if (containerRef.current.requestFullscreen) {
-          await containerRef.current.requestFullscreen();
-        }
+        await containerRef.current.requestFullscreen();
       } catch (error) {
         console.error('Failed to enter fullscreen:', error);
       }
     }
-    onToggleFullscreen();
   };
 
   const exitFullscreen = async () => {
-    try {
-      if (document.fullscreenElement) {
+    if (document.fullscreenElement) {
+      try {
         await document.exitFullscreen();
+      } catch (error) {
+        console.error('Failed to exit fullscreen:', error);
       }
-    } catch (error) {
-      console.error('Failed to exit fullscreen:', error);
     }
-    onToggleFullscreen();
   };
 
+  /** ✅ Error State **/
   if (hasError) {
     return (
       <div className="flex items-center justify-center h-full min-h-[400px] bg-gradient-card backdrop-blur-glass border-glass-border rounded-lg">
         <div className="text-center space-y-4">
           <AlertCircle className="w-12 h-12 text-destructive mx-auto" />
           <h3 className="text-lg font-semibold text-foreground">Failed to Load Game</h3>
-          <p className="text-muted-foreground">The game could not be loaded. Please try again later.</p>
-          <Button 
-            onClick={() => window.location.reload()} 
+          <p className="text-muted-foreground">
+            The game could not be loaded. Please try again later.
+          </p>
+          <Button
+            onClick={() => window.location.reload()}
             variant="outline"
             className="bg-background-glass border-glass-border hover:bg-glass-primary"
           >
@@ -93,13 +125,11 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
     );
   }
 
+  /** ✅ Fullscreen Layout **/
   if (isFullscreen) {
     return (
-      <div 
-        ref={containerRef}
-        className="fixed inset-0 z-50 bg-black flex flex-col"
-      >
-        {/* Fullscreen Exit Button - Positioned in top-left corner away from game area */}
+      <div ref={containerRef} className="fixed inset-0 z-50 bg-black flex flex-col">
+        {/* Exit Fullscreen Button */}
         <div className="absolute top-2 left-2 z-50">
           <Button
             onClick={exitFullscreen}
@@ -112,7 +142,7 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
           </Button>
         </div>
 
-        {/* Loading Overlay for Fullscreen */}
+        {/* Loading Overlay */}
         {isLoading && (
           <div className="absolute inset-0 bg-black/90 backdrop-blur-glass flex flex-col items-center justify-center z-40">
             <div className="text-center space-y-4">
@@ -122,20 +152,18 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
                   {isUnityGame ? 'Loading Unity Game...' : 'Loading Game...'}
                 </h3>
                 <div className="w-64 h-2 bg-white/20 rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-gradient-primary transition-all duration-300 ease-out"
                     style={{ width: `${Math.min(loadProgress, 100)}%` }}
                   />
                 </div>
-                <p className="text-sm text-white/70">
-                  {Math.round(Math.min(loadProgress, 100))}%
-                </p>
+                <p className="text-sm text-white/70">{Math.round(Math.min(loadProgress, 100))}%</p>
               </div>
             </div>
           </div>
         )}
 
-        {/* Game iframe - Full viewport */}
+        {/* Game iframe */}
         <iframe
           ref={iframeRef}
           src={`/games/${game.folder}/index.html`}
@@ -145,17 +173,16 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
           allow="gamepad; microphone; camera"
           onLoad={handleIframeLoad}
           onError={handleIframeError}
-          style={{
-            background: isUnityGame ? '#000' : 'transparent',
-          }}
+          style={{ background: isUnityGame ? '#000' : 'transparent' }}
         />
       </div>
     );
   }
 
+  /** ✅ Normal View **/
   return (
     <div className="space-y-4">
-      {/* Fullscreen Button - Outside of game frame */}
+      {/* Fullscreen Button */}
       <div className="flex justify-end">
         <Button
           onClick={enterFullscreen}
@@ -170,7 +197,7 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
       </div>
 
       {/* Game Container */}
-      <div 
+      <div
         ref={containerRef}
         className="relative aspect-video rounded-lg overflow-hidden bg-gradient-card backdrop-blur-glass border-glass-border"
       >
@@ -184,14 +211,12 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
                   {isUnityGame ? 'Loading Unity Game...' : 'Loading Game...'}
                 </h3>
                 <div className="w-64 h-2 bg-background-light rounded-full overflow-hidden">
-                  <div 
+                  <div
                     className="h-full bg-gradient-primary transition-all duration-300 ease-out"
                     style={{ width: `${Math.min(loadProgress, 100)}%` }}
                   />
                 </div>
-                <p className="text-sm text-muted-foreground">
-                  {Math.round(Math.min(loadProgress, 100))}%
-                </p>
+                <p className="text-sm text-muted-foreground">{Math.round(Math.min(loadProgress, 100))}%</p>
               </div>
             </div>
           </div>
@@ -207,9 +232,7 @@ export const GameLoader = ({ game, isFullscreen, onToggleFullscreen }: GameLoade
           allow="gamepad; microphone; camera"
           onLoad={handleIframeLoad}
           onError={handleIframeError}
-          style={{
-            background: isUnityGame ? '#000' : 'transparent',
-          }}
+          style={{ background: isUnityGame ? '#000' : 'transparent' }}
         />
       </div>
     </div>
