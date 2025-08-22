@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Maximize, Minimize } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { gamesData } from '@/data/games';
 import { useState } from 'react';
 import { GameLoader } from '@/components/GameLoader';
@@ -64,40 +64,12 @@ const GamePage = () => {
           {/* Game Container */}
           <div className="col-span-12 lg:col-span-8 px-2 lg:px-0">
             <Card className="group bg-gradient-card backdrop-blur-glass border-glass-border animate-fade-in shadow-glass hover:shadow-glow transition-all duration-300 h-full flex flex-col">
-              {/* Game Frame */}
-              <CardContent className="p-0 flex-1 relative">
+              <CardContent className="p-0 flex-1">
                 <GameLoader
                   game={game}
                   isFullscreen={isFullscreen}
                   onToggleFullscreen={toggleFullscreen}
                 />
-
-                {/* Bottom Bar */}
-                <div className="absolute bottom-0 left-0 w-full bg-glass-secondary/40 border-t border-glass-border backdrop-blur-sm flex items-center justify-between px-4 py-2">
-                  <div className="flex items-center gap-3">
-                    <img
-                      src={game.thumbnail}
-                      alt={game.title}
-                      className="w-8 h-8 object-cover rounded-md"
-                    />
-                    <h5 className="text-foreground font-semibold text-lg">{game.title}</h5>
-                  </div>
-                  <Button
-                    onClick={toggleFullscreen}
-                    variant="outline"
-                    className="text-foreground hover:bg-glass-primary px-3 py-1 flex items-center gap-1"
-                  >
-                    {isFullscreen ? (
-                      <>
-                        <Minimize className="w-4 h-4" /> Exit
-                      </>
-                    ) : (
-                      <>
-                        <Maximize className="w-4 h-4" /> Fullscreen
-                      </>
-                    )}
-                  </Button>
-                </div>
               </CardContent>
             </Card>
           </div>
