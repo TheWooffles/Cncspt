@@ -2,7 +2,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Maximize } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { gamesData } from '@/data/games';
 import { useState } from 'react';
 import { GameLoader } from '@/components/GameLoader';
@@ -42,18 +42,6 @@ const GamePage = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Games
           </Button>
-
-          {/* Only show Enter Fullscreen button if not already fullscreen */}
-          {!isFullscreen && (
-            <Button
-              onClick={() => setIsFullscreen(true)}
-              variant="outline"
-              size="sm"
-              className="bg-background-glass border-glass-border hover:bg-glass-primary"
-            >
-              <Maximize className="w-4 h-4 mr-2" /> Fullscreen
-            </Button>
-          )}
         </div>
       </header>
 
@@ -70,6 +58,7 @@ const GamePage = () => {
                 game={game}
                 isFullscreen={isFullscreen}
                 onExitFullscreen={() => setIsFullscreen(false)}
+                onEnterFullscreen={() => setIsFullscreen(true)}
               />
             </CardContent>
           </Card>
