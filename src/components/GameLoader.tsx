@@ -28,6 +28,7 @@ export const GameLoader = ({
         await container.requestFullscreen();
         onEnterFullscreen();
       } catch {
+        // iOS Safari fallback
         setPseudoFS(true);
         onEnterFullscreen();
         document.documentElement.style.overflow = 'hidden';
@@ -40,19 +41,18 @@ export const GameLoader = ({
     }
   };
 
+  // ESC key listener
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
-        if (pseudoFS) {
-          setPseudoFS(false);
-          onExitFullscreen();
-          document.documentElement.style.removeProperty('overflow');
+        if (isFullscreen || pseudoFS) {
+          toggleFullscreen();
         }
       }
     };
     document.addEventListener('keydown', onKey);
     return () => document.removeEventListener('keydown', onKey);
-  }, [pseudoFS, onExitFullscreen]);
+  }, [isFullscreen, pseudoFS]);
 
   return (
     <div className={`${pseudoFS ? 'fixed inset-0 z-50 bg-black' : ''} flex flex-col`}>
