@@ -17,7 +17,7 @@ export const Footer = () => {
 
           <div className="text-center md:text-right">
             <p className="text-sm text-muted-foreground">
-              © 2024 Cncspt. All rights reserved.
+              © 2025 Cncspt. All rights reserved.
             </p>
             <p className="text-xs text-muted-foreground mt-1">
               Built with ❤ by Cncspt (Formerly Wooffles)
