@@ -41,8 +41,8 @@ export const gamesData: Game[] = [
   },
   {
     id: '3',
-    title: 'Minecraft Classic',
-    description: 'Building Sandbox Game',
+    title: 'Monkey Mart',
+    description: 'Building Your own Supermarket',
     instructions: 'Plays',
     thumbnail: '/games/minecraft-classic/pack.png',
     tags: ['sandbox', 'building', 'creative', 'multiplayer'],
