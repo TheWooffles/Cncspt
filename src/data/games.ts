@@ -89,14 +89,4 @@ export const gamesData: Game[] = [
     folder: 'retro-bowl',
     featured: false,
   },
-  {
-    id: '8',
-    title: '1v1.lol',
-    description: '1v1 other people',
-    instructions: 'Plays',
-    thumbnail: '/games/1v1lol/splash.png',
-    tags: ['building', 'fighting', '1v1', 'multiplayer'],
-    folder: '1v1lol',
-    featured: false,
-  },
 ];
