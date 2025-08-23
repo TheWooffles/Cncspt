@@ -124,9 +124,9 @@ export const gamesData: Game[] = [
     title: "Drift Hunters",
     description: "Puzzle Block Games",
     instructions: "Plays",
-    thumbnail: "/games/drift-hunters/drift-hunters.png",
+    thumbnail: "/games/Drift-Hunters-main/drift-hunters.png",
     tags: ["car", "racing", "drift"],
-    folder: "drift-hunters",
+    folder: "Drift-Hunters-main",
     featured: false,
   },
 ];
