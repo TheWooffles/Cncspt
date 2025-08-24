@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
 import { gamesData } from "@/data/games";
-import { useState, useEffect, useMemo } from "react";
+import { useState, useEffect } from "react";
 import { GameLoader } from "@/components/GameLoader";
 
 const GamePage = () => {
@@ -45,29 +45,21 @@ const GamePage = () => {
     );
   }
 
-  // Find related games
-  const relatedGames = useMemo(() => {
-    const related = gamesData.filter(
-      (g) =>
-        g.id !== game.id &&
-        (g.tags.some((tag) => game.tags.includes(tag)) ||
-          g.title.toLowerCase().includes(game.title.toLowerCase()))
-    );
+  // Related games logic
+  const relatedGames = gamesData.filter(
+    (g) =>
+      g.id !== game.id &&
+      (g.tags.some((tag) => game.tags.includes(tag)) ||
+        g.title.toLowerCase().includes(game.title.toLowerCase()))
+  );
 
-    // Fill with random games if not enough related
-    if (related.length < 6) {
-      const remaining = gamesData.filter(
-        (g) => g.id !== game.id && !related.some((r) => r.id === g.id)
-      );
-      while (related.length < 6 && remaining.length > 0) {
-        const randomIndex = Math.floor(Math.random() * remaining.length);
-        related.push(remaining[randomIndex]);
-        remaining.splice(randomIndex, 1);
-      }
-    }
-
-    return related.slice(0, 6); // Max 6 items
-  }, [game]);
+  // Other random games logic
+  const otherGames = gamesData
+    .filter(
+      (g) => g.id !== game.id && !relatedGames.some((rel) => rel.id === g.id)
+    )
+    .sort(() => Math.random() - 0.5)
+    .slice(0, 6); // Limit to 6 random games
 
   return (
     <div
@@ -145,42 +137,89 @@ const GamePage = () => {
           </div>
 
           <div>
-            <h4 className="text-foreground text-xl font-semibold mb-4">
-              Related Games
-            </h4>
-            <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
-              {relatedGames.map((related) => (
-                <Card
-                  key={related.id}
-                  className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
-                  onClick={() => navigate(`/game/${related.id}`)}
-                >
-                  <div className="flex flex-col gap-2">
-                    <div className="flex items-center gap-3">
-                      <img
-                        src={related.thumbnail}
-                        alt={related.title}
-                        className="w-16 h-16 object-cover rounded-md"
-                      />
-                      <h5 className="text-foreground font-semibold">
-                        {related.title}
-                      </h5>
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {related.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="outline"
-                          className="text-xs border-glass-border bg-glass-secondary/50 px-2 py-0.5"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
-                </Card>
-              ))}
-            </div>
+            {/* Related Games */}
+            {relatedGames.length > 0 && (
+              <>
+                <h4 className="text-foreground text-xl font-semibold mb-4">
+                  Related Games
+                </h4>
+                <div className="space-y-4 max-h-[70vh] overflow-y-auto scrollbar-hide">
+                  {relatedGames.map((related) => (
+                    <Card
+                      key={related.id}
+                      className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-glow transition-all"
+                      onClick={() => navigate(`/game/${related.id}`)}
+                    >
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={related.thumbnail}
+                            alt={related.title}
+                            className="w-16 h-16 object-cover rounded-md"
+                          />
+                          <h5 className="text-foreground font-semibold">
+                            {related.title}
+                          </h5>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {related.tags.map((tag) => (
+                            <Badge
+                              key={tag}
+                              variant="outline"
+                              className="text-xs border-glass-border bg-glass-secondary/50 px-2 py-0.5"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </>
+            )}
+
+            {/* Other Games */}
+            {otherGames.length > 0 && (
+              <>
+                <h4 className="text-foreground text-xl font-semibold mt-8 mb-4">
+                  Other Games
+                </h4>
+                <div className="space-y-4 max-h-[70vh] overflow-y-auto scrollbar-hide">
+                  {otherGames.map((other) => (
+                    <Card
+                      key={other.id}
+                      className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-glow transition-all"
+                      onClick={() => navigate(`/game/${other.id}`)}
+                    >
+                      <div className="flex flex-col gap-2">
+                        <div className="flex items-center gap-3">
+                          <img
+                            src={other.thumbnail}
+                            alt={other.title}
+                            className="w-16 h-16 object-cover rounded-md"
+                          />
+                          <h5 className="text-foreground font-semibold">
+                            {other.title}
+                          </h5>
+                        </div>
+                        <div className="flex flex-wrap gap-1">
+                          {other.tags.map((tag) => (
+                            <Badge
+                              key={tag}
+                              variant="outline"
+                              className="text-xs border-glass-border bg-glass-secondary/50 px-2 py-0.5"
+                            >
+                              {tag}
+                            </Badge>
+                          ))}
+                        </div>
+                      </div>
+                    </Card>
+                  ))}
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
