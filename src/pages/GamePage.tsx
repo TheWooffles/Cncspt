@@ -2,7 +2,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Maximize, Minimize, ArrowUpSquare } from "lucide-react";
 import { gamesData } from "@/data/games";
 import { useState, useEffect } from "react";
 import { GameLoader } from "@/components/GameLoader";
@@ -11,6 +11,7 @@ const GamePage = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showControlsPopup, setShowControlsPopup] = useState(false);
 
   const game = gamesData.find((g) => g.id === id);
 
@@ -65,7 +66,7 @@ const GamePage = () => {
       }`}
     >
       <header className="bg-background-glass backdrop-blur-glass border-b border-glass-border sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-2 flex items-center">
+        <div className="container mx-auto px-4 py-2 flex items-center justify-between">
           <Button
             onClick={() => navigate("/")}
             variant="ghost"
@@ -74,10 +75,73 @@ const GamePage = () => {
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Games
           </Button>
+
+          {/* Fullscreen + Controls buttons */}
+          <div className="flex gap-2">
+            <Button
+              onClick={() => setShowControlsPopup(!showControlsPopup)}
+              variant="outline"
+              className="flex items-center gap-1 text-foreground"
+            >
+              <ArrowUpSquare className="w-5 h-5" />
+              Controls
+            </Button>
+
+            <Button
+              onClick={() =>
+                isFullscreen
+                  ? document.exitFullscreen()
+                  : document.documentElement.requestFullscreen()
+              }
+              variant="outline"
+              className="flex items-center gap-1 text-foreground"
+            >
+              {isFullscreen ? (
+                <Minimize className="w-5 h-5" />
+              ) : (
+                <Maximize className="w-5 h-5" />
+              )}
+              {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
+            </Button>
+          </div>
         </div>
       </header>
 
-      <div className="container mx-auto px-4 py-6">
+      <div className="container mx-auto px-4 py-6 relative">
+        {/* Controls Popup */}
+        {showControlsPopup && game.controls && (
+          <div className="absolute top-16 right-4 w-80 bg-gray-900 bg-opacity-95 p-4 rounded-lg border border-gray-700 shadow-lg z-50">
+            <h3 className="text-lg font-semibold text-white mb-2">Controls</h3>
+            {game.controls.singlePlayer && (
+              <div className="mb-3">
+                <h4 className="font-medium text-white mb-1">Single Player:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  {game.controls.singlePlayer.map((c, i) => (
+                    <li key={i}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            {game.controls.twoPlayer && (
+              <div>
+                <h4 className="font-medium text-white mb-1">Two Player:</h4>
+                <ul className="list-disc list-inside text-gray-300 space-y-1">
+                  {game.controls.twoPlayer.map((c, i) => (
+                    <li key={i}>{c}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <Button
+              onClick={() => setShowControlsPopup(false)}
+              variant="ghost"
+              className="mt-3 w-full"
+            >
+              Close
+            </Button>
+          </div>
+        )}
+
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Main Game + Details */}
           <div className="lg:col-span-2 flex flex-col">
@@ -104,15 +168,7 @@ const GamePage = () => {
                     {game.description}
                   </p>
 
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-foreground text-lg">
-                      Instructions:
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border whitespace-pre-line">
-                      {game.instructions}
-                    </p>
-                  </div>
-
+                  {/* Tags */}
                   <div className="space-y-3">
                     <h4 className="font-semibold text-foreground text-lg">
                       Tags:
