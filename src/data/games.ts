@@ -4,129 +4,214 @@ export const gamesData: Game[] = [
   {
     id: "1",
     title: "Basket Random",
-    description: "Basketball Game",
-    instructions: "Plays",
+    description:
+      "Basket Random is a fun and unpredictable basketball game where anything can happen! Enjoy wacky physics, random courts, and hilarious moves as you compete to score points against your opponent.",
     thumbnail: "/games/basket-random/splash.jpeg",
-    tags: ["basketball", "strategy", "sports", "random", "2-Player", "1v1"],
+    tags: ["Basketball", "Strategy", "Sports", "Random", "2-Player", "1v1"],
     folder: "basket-random",
     featured: true,
+    players: "Single & Two",
+    controls: {
+      singlePlayer: ["Move & Jump: Arrow Keys"],
+      twoPlayer: ["P1: Jump with W", "P2: Jump with Up Arrow"],
+    },
+    tips: ["Time your jumps carefully.", "Adapt to random changes each round."],
   },
   {
     id: "2",
     title: "Basketball Stars",
     description:
-      "Step onto the court in Basketball Stars!\n\n" +
-      "• Play intense 1v1 basketball matches\n" +
-      "• Show off dribbling, shooting, and dunking skills\n" +
-      "• Compete against AI or a friend in 2-player mode\n" +
-      "• Master quick steals, powerful shots, and fast moves",
-    instructions:
-      "Single Player:\n" +
-      "• Move: Arrow Keys\n" +
-      "• Shoot/Dunk: X\n" +
-      "• Steal/Block: Z\n" +
-      "• Dash: Double-tap Arrow Key\n\n" +
-      "Two Player:\n" +
-      "• P1 — Move: A/D | Shoot: W | Steal: S\n" +
-      "• P2 — Move: Arrow Keys | Shoot: Up Arrow | Steal: Down Arrow\n\n" +
-      "Tips & Tricks:\n" +
-      "• Time jumps to block shots\n" +
-      "• Steal when the opponent dribbles too close\n" +
-      "• Use fakes to create space for easy shots\n" +
-      "• Dash to break free for dunks",
+      "Step onto the court in Basketball Stars! Show off your skills with powerful dunks, quick steals, and smooth dribbles. Play 1v1 against AI or challenge a friend in intense basketball matches.",
     thumbnail: "/games/basketball-stars/assets/images/basketball-stars.png",
-    tags: ["basketball", "sports", "1v1", "2-Player"],
+    tags: ["Basketball", "Sports", "1v1", "2-Player"],
     folder: "basketball-stars",
     featured: true,
+    players: "Single & Two",
+    controls: {
+      singlePlayer: [
+        "Move: Arrow Keys",
+        "Shoot/Dunk: X",
+        "Steal/Block: Z",
+        "Dash: Double-tap Arrow Key",
+      ],
+      twoPlayer: [
+        "P1: Move A/D | Shoot W | Steal S",
+        "P2: Move Arrows | Shoot Up Arrow | Steal Down Arrow",
+      ],
+    },
+    tips: [
+      "Steal when the opponent dribbles too close.",
+      "Dash for quick breaks.",
+      "Fake moves to outsmart your opponent.",
+    ],
   },
   {
     id: "3",
     title: "Monkey Mart",
-    description: "Building Your own Supermarket",
-    instructions: "Plays",
+    description:
+      "Monkey Mart is a fun and addictive supermarket simulation game where you run your own store! Stock products, serve customers, and expand your business as you earn coins and unlock new features.",
     thumbnail: "/games/MonkeyMart/bg_loading.png",
-    tags: ["store", "building", "simulator", "idle"],
+    tags: ["Store", "Building", "Simulator", "Idle"],
     folder: "MonkeyMart",
     featured: true,
+    players: "Single",
+    controls: {
+      singlePlayer: [
+        "Move your monkey to plant crops and stock shelves.",
+        "Collect coins from customers.",
+        "Upgrade and expand your store.",
+      ],
+    },
+    tips: [
+      "Keep shelves stocked to maximize profits.",
+      "Upgrade early for faster progress.",
+    ],
   },
   {
     id: "4",
     title: "Motox3m",
-    description: "Racing obby game",
-    instructions: "Plays",
+    description:
+      "Motox3m is an adrenaline-pumping bike racing game filled with insane stunts and dangerous obstacles. Race through challenging levels and perform tricks to earn the best time!",
     thumbnail: "/games/motox3m/splash.jpg",
-    tags: ["obby", "racing", "car"],
+    tags: ["Obby", "Racing", "Car"],
     folder: "motox3m",
     featured: false,
+    players: "Single",
+    controls: {
+      singlePlayer: [
+        "Accelerate: Up Arrow",
+        "Brake: Down Arrow",
+        "Lean Left: Left Arrow",
+        "Lean Right: Right Arrow",
+      ],
+    },
+    tips: [
+      "Balance your bike to avoid crashes.",
+      "Time your flips for style points.",
+    ],
   },
   {
     id: "5",
     title: "2048",
-    description: "Number Puzzle Game",
-    instructions: "Plays",
+    description:
+      "2048 is a popular sliding puzzle game where you combine tiles with the same numbers to reach the 2048 tile. Use logic and planning to achieve the highest score possible.",
     thumbnail: "/games/2048/2048.png",
-    tags: ["puzzle", "strategy"],
+    tags: ["Puzzle", "Strategy"],
     folder: "2048",
     featured: false,
+    players: "Single",
+    controls: {
+      singlePlayer: [
+        "Use Arrow Keys to slide tiles.",
+        "Combine matching numbers to create larger tiles.",
+      ],
+    },
+    tips: [
+      "Plan moves ahead to avoid blocking yourself.",
+      "Keep high-value tiles in one corner.",
+    ],
   },
-  // {
-  //   id: '6',
-  //   title: 'Bitlife',
-  //   description: 'Life Simulator',
-  //   instructions: 'Plays',
-  //   thumbnail: '/games/bitlife/logo.png',
-  //   tags: ['simulator', 'idle'],
-  //   folder: 'bitlife',
-  //   featured: false,
-  // },
   {
     id: "6",
     title: "Retro Bowl",
-    description: "Football Simulator",
-    instructions: "Plays",
+    description:
+      "Retro Bowl is a classic-style American football game where you manage your team, call plays, and score touchdowns. Become the ultimate football coach and player!",
     thumbnail: "/games/retro-bowl/img/icon.jpg",
-    tags: ["sports", "football", "strategy"],
+    tags: ["Sports", "Football", "Strategy"],
     folder: "retro-bowl",
     featured: false,
+    players: "Single",
+    controls: {
+      singlePlayer: [
+        "Move: Arrow Keys",
+        "Pass: Click or Tap",
+        "Manage team in menu for upgrades.",
+      ],
+    },
+    tips: [
+      "Recruit top players for better performance.",
+      "Balance offense and defense.",
+    ],
   },
   {
     id: "7",
     title: "Awesome Tanks 2",
-    description: "Tank Simulator",
-    instructions: "Plays",
+    description:
+      "Awesome Tanks 2 is an action-packed tank battle game! Destroy enemies, upgrade your tank, and survive challenging missions to dominate the battlefield.",
     thumbnail: "/games/awesometanks2/awesometanks2.jpg",
-    tags: ["tanks", "puzzle", "strategy"],
+    tags: ["Tanks", "Puzzle", "Strategy"],
     folder: "awesometanks2",
     featured: false,
+    players: "Single",
+    controls: {
+      singlePlayer: [
+        "Move: WASD or Arrow Keys",
+        "Shoot: Left Mouse Click",
+        "Switch Weapons: 1-3",
+      ],
+    },
+    tips: [
+      "Upgrade armor and firepower for tougher levels.",
+      "Use cover to avoid enemy fire.",
+    ],
   },
   {
     id: "8",
     title: "Rocket League",
-    description: "Car Simulator",
-    instructions: "Plays",
+    description:
+      "Rocket League is a high-speed car soccer game where you control rocket-powered cars to score goals. Race, jump, and boost your way to victory in this unique sports experience.",
     thumbnail: "/games/Rocket-League/splash.png",
-    tags: ["cars", "football", "strategy"],
+    tags: ["Cars", "Football", "Strategy"],
     folder: "Rocket-League",
     featured: false,
+    players: "Single & Two",
+    controls: {
+      singlePlayer: ["Move: WASD or Arrow Keys", "Boost: Shift", "Jump: Space"],
+    },
+    tips: [
+      "Boost at the right time for speed advantage.",
+      "Control your jumps for accurate shots.",
+    ],
   },
   {
     id: "9",
     title: "Bloxors",
-    description: "Puzzle Block Games",
-    instructions: "Plays",
+    description:
+      "Bloxors is a challenging puzzle game where you roll a rectangular block to fit into a square hole. Solve tricky levels using logic and precision!",
     thumbnail: "/games/bloxors/block.png",
-    tags: ["puzzle", "strategy"],
+    tags: ["Puzzle", "Strategy"],
     folder: "bloxors",
     featured: false,
+    players: "Single",
+    controls: {
+      singlePlayer: ["Move: Arrow Keys to roll the block."],
+    },
+    tips: [
+      "Plan moves to avoid falling off the edge.",
+      "Think ahead for narrow paths.",
+    ],
   },
   {
     id: "10",
     title: "Drift Hunters",
-    description: "Car Drifting Game",
-    instructions: "Plays",
+    description:
+      "Drift Hunters is an exciting car drifting game where you race, drift, and earn points to upgrade your vehicles. Master your drifting skills across various tracks and cars.",
     thumbnail: "/games/drift-hunters/media/drift-hunters.png",
-    tags: ["car", "racing", "drift"],
+    tags: ["Car", "Racing", "Drift"],
     folder: "drift-hunters",
     featured: false,
+    players: "Single",
+    controls: {
+      singlePlayer: [
+        "Accelerate: W or Up Arrow",
+        "Brake: S or Down Arrow",
+        "Steer: A/D or Left/Right Arrows",
+        "Handbrake: Space",
+      ],
+    },
+    tips: [
+      "Chain drifts for maximum points.",
+      "Upgrade your car for better handling.",
+    ],
   },
 ];
