@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ArrowLeft } from "lucide-react";
 import { gamesData } from "@/data/games";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { GameLoader } from "@/components/GameLoader";
 
 const GamePage = () => {
@@ -45,12 +45,29 @@ const GamePage = () => {
     );
   }
 
-  const relatedGames = gamesData.filter(
-    (g) =>
-      g.id !== game.id &&
-      (g.tags.some((tag) => game.tags.includes(tag)) ||
-        g.title.toLowerCase().includes(game.title.toLowerCase()))
-  );
+  // Find related games
+  const relatedGames = useMemo(() => {
+    const related = gamesData.filter(
+      (g) =>
+        g.id !== game.id &&
+        (g.tags.some((tag) => game.tags.includes(tag)) ||
+          g.title.toLowerCase().includes(game.title.toLowerCase()))
+    );
+
+    // Fill with random games if not enough related
+    if (related.length < 6) {
+      const remaining = gamesData.filter(
+        (g) => g.id !== game.id && !related.some((r) => r.id === g.id)
+      );
+      while (related.length < 6 && remaining.length > 0) {
+        const randomIndex = Math.floor(Math.random() * remaining.length);
+        related.push(remaining[randomIndex]);
+        remaining.splice(randomIndex, 1);
+      }
+    }
+
+    return related.slice(0, 6); // Max 6 items
+  }, [game]);
 
   return (
     <div
@@ -131,11 +148,11 @@ const GamePage = () => {
             <h4 className="text-foreground text-xl font-semibold mb-4">
               Related Games
             </h4>
-            <div className="space-y-4 max-h-[70vh] overflow-y-auto">
+            <div className="space-y-4 max-h-[70vh] overflow-y-auto pr-1">
               {relatedGames.map((related) => (
                 <Card
                   key={related.id}
-                  className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-glow transition-all"
+                  className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all duration-300"
                   onClick={() => navigate(`/game/${related.id}`)}
                 >
                   <div className="flex flex-col gap-2">
