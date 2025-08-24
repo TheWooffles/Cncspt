@@ -22,17 +22,19 @@ const NotFound = () => {
           <div className="w-20 h-20 mx-auto bg-gradient-primary rounded-full flex items-center justify-center shadow-glow">
             <AlertCircle className="w-10 h-10 text-primary-foreground" />
           </div>
-          
+
           <div className="space-y-2">
             <h1 className="text-4xl font-bold text-foreground">404</h1>
-            <h2 className="text-xl font-semibold text-foreground">Page Not Found</h2>
+            <h2 className="text-xl font-semibold text-foreground">
+              Page Not Found
+            </h2>
             <p className="text-muted-foreground">
               Oops! The page you're looking for doesn't exist or has been moved.
             </p>
           </div>
 
-          <Button 
-            onClick={() => navigate('/')} 
+          <Button
+            onClick={() => navigate("/")}
             className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-glow transition-all duration-300 hover:scale-105"
           >
             <Home className="w-4 h-4 mr-2" />
@@ -40,7 +42,10 @@ const NotFound = () => {
           </Button>
 
           <p className="text-xs text-muted-foreground">
-            Route attempted: <code className="bg-muted px-2 py-1 rounded">{location.pathname}</code>
+            Route attempted:{" "}
+            <code className="bg-muted px-2 py-1 rounded">
+              {location.pathname}
+            </code>
           </p>
         </CardContent>
       </Card>

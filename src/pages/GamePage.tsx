@@ -1,11 +1,11 @@
-import { useParams, useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Maximize } from 'lucide-react';
-import { gamesData } from '@/data/games';
-import { useState } from 'react';
-import { GameLoader } from '@/components/GameLoader';
+import { useParams, useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { ArrowLeft } from "lucide-react";
+import { gamesData } from "@/data/games";
+import { useState, useEffect } from "react";
+import { GameLoader } from "@/components/GameLoader";
 
 const GamePage = () => {
   const { id } = useParams<{ id: string }>();
@@ -14,13 +14,29 @@ const GamePage = () => {
 
   const game = gamesData.find((g) => g.id === id);
 
+  // Exit fullscreen automatically if user presses ESC in native fullscreen
+  useEffect(() => {
+    const onFullscreenChange = () => {
+      if (!document.fullscreenElement && isFullscreen) {
+        setIsFullscreen(false);
+      }
+    };
+    document.addEventListener("fullscreenchange", onFullscreenChange);
+    return () =>
+      document.removeEventListener("fullscreenchange", onFullscreenChange);
+  }, [isFullscreen]);
+
   if (!game) {
     return (
       <div className="min-h-screen bg-gradient-hero flex items-center justify-center">
         <Card className="bg-gradient-card backdrop-blur-glass border-glass-border p-8 text-center">
-          <h2 className="text-2xl font-bold text-foreground mb-4">Game Not Found</h2>
-          <p className="text-muted-foreground mb-6">The game you're looking for doesn't exist.</p>
-          <Button onClick={() => navigate('/')} variant="default">
+          <h2 className="text-2xl font-bold text-foreground mb-4">
+            Game Not Found
+          </h2>
+          <p className="text-muted-foreground mb-6">
+            The game you're looking for doesn't exist.
+          </p>
+          <Button onClick={() => navigate("/")} variant="default">
             <ArrowLeft className="w-4 h-4 mr-2" />
             Back to Games
           </Button>
@@ -29,7 +45,6 @@ const GamePage = () => {
     );
   }
 
-  // Related games: filter by tags or similar title
   const relatedGames = gamesData.filter(
     (g) =>
       g.id !== game.id &&
@@ -38,12 +53,15 @@ const GamePage = () => {
   );
 
   return (
-    <div className={`min-h-screen bg-gradient-hero ${isFullscreen ? 'overflow-hidden' : ''}`}>
-      {/* Slim Header */}
+    <div
+      className={`min-h-screen bg-gradient-hero ${
+        isFullscreen ? "overflow-hidden" : ""
+      }`}
+    >
       <header className="bg-background-glass backdrop-blur-glass border-b border-glass-border sticky top-0 z-40">
         <div className="container mx-auto px-4 py-2 flex items-center">
           <Button
-            onClick={() => navigate('/')}
+            onClick={() => navigate("/")}
             variant="ghost"
             className="text-foreground hover:bg-glass-primary"
           >
@@ -55,7 +73,6 @@ const GamePage = () => {
 
       <div className="container mx-auto px-4 py-6">
         <div className="grid lg:grid-cols-3 gap-8">
-          {/* Game Container */}
           <div className="lg:col-span-2 flex flex-col">
             <Card className="relative bg-transparent shadow-none border-none">
               <CardContent className="p-0 relative">
@@ -68,11 +85,12 @@ const GamePage = () => {
               </CardContent>
             </Card>
 
-            {/* Game Info */}
             <div className="mt-4">
               <Card className="bg-gradient-card backdrop-blur-glass border-glass-border shadow-glass">
                 <CardHeader className="pb-4">
-                  <CardTitle className="text-foreground text-2xl font-bold">{game.title}</CardTitle>
+                  <CardTitle className="text-foreground text-2xl font-bold">
+                    {game.title}
+                  </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
@@ -80,14 +98,18 @@ const GamePage = () => {
                   </p>
 
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-foreground text-lg">Instructions:</h4>
+                    <h4 className="font-semibold text-foreground text-lg">
+                      Instructions:
+                    </h4>
                     <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border whitespace-pre-line">
                       {game.instructions}
                     </p>
                   </div>
 
                   <div className="space-y-3">
-                    <h4 className="font-semibold text-foreground text-lg">Tags:</h4>
+                    <h4 className="font-semibold text-foreground text-lg">
+                      Tags:
+                    </h4>
                     <div className="flex flex-wrap gap-2">
                       {game.tags.map((tag) => (
                         <Badge
@@ -105,9 +127,10 @@ const GamePage = () => {
             </div>
           </div>
 
-          {/* Related Games */}
           <div>
-            <h4 className="text-foreground text-xl font-semibold mb-4">Related Games</h4>
+            <h4 className="text-foreground text-xl font-semibold mb-4">
+              Related Games
+            </h4>
             <div className="space-y-4 max-h-[70vh] overflow-y-auto">
               {relatedGames.map((related) => (
                 <Card
@@ -122,7 +145,9 @@ const GamePage = () => {
                         alt={related.title}
                         className="w-16 h-16 object-cover rounded-md"
                       />
-                      <h5 className="text-foreground font-semibold">{related.title}</h5>
+                      <h5 className="text-foreground font-semibold">
+                        {related.title}
+                      </h5>
                     </div>
                     <div className="flex flex-wrap gap-1">
                       {related.tags.map((tag) => (
