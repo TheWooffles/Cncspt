@@ -54,7 +54,7 @@ export const gamesData: Game[] = [
       "Monkey Mart is a fun and addictive supermarket simulation game where you run your own store! Stock products, serve customers, and expand your business as you earn coins and unlock new features.",
     thumbnail: "/games/MonkeyMart/bg_loading.png",
     tags: ["Store", "Building", "Simulator", "Idle"],
-    folder: "monkey-mart",
+    folder: "MonkeyMart",
     featured: true,
     players: "Single",
     developer: "Tiny Dobbins",
