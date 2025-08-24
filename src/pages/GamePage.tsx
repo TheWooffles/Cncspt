@@ -100,35 +100,116 @@ const GamePage = () => {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
-                    {game.description}
-                  </p>
-
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-foreground text-lg">
-                      Instructions:
-                    </h4>
-                    <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border whitespace-pre-line">
-                      {game.instructions}
-                    </p>
-                  </div>
-
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-foreground text-lg">
-                      Tags:
-                    </h4>
-                    <div className="flex flex-wrap gap-2">
-                      {game.tags.map((tag) => (
-                        <Badge
-                          key={tag}
-                          variant="outline"
-                          className="border-glass-border bg-glass-secondary/50 hover:bg-glass-primary transition-colors px-3 py-1"
-                        >
-                          {tag}
-                        </Badge>
-                      ))}
+                  {/* Description */}
+                  {game.description && (
+                    <div>
+                      <h4 className="font-semibold text-foreground text-lg mb-1">
+                        Description:
+                      </h4>
+                      <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                        {game.description}
+                      </p>
                     </div>
-                  </div>
+                  )}
+
+                  {/* Instructions */}
+                  {game.instructions && (
+                    <div>
+                      <h4 className="font-semibold text-foreground text-lg mb-1">
+                        Instructions:
+                      </h4>
+                      <p className="text-sm text-muted-foreground leading-relaxed bg-glass-secondary/30 p-4 rounded-lg border border-glass-border whitespace-pre-line">
+                        {game.instructions}
+                      </p>
+                    </div>
+                  )}
+
+                  {/* Players */}
+                  {game.players && (
+                    <div>
+                      <h4 className="font-semibold text-foreground text-lg mb-1">
+                        Players:
+                      </h4>
+                      <p className="text-muted-foreground">{game.players}</p>
+                    </div>
+                  )}
+
+                  {/* Controls */}
+                  {game.controls && (
+                    <div>
+                      <h4 className="font-semibold text-foreground text-lg mb-1">
+                        Controls:
+                      </h4>
+                      {game.controls.singlePlayer && (
+                        <div className="mb-2">
+                          <h5 className="text-muted-foreground font-medium">
+                            Single Player:
+                          </h5>
+                          <ul className="list-disc list-inside text-muted-foreground">
+                            {game.controls.singlePlayer.map((c, i) => (
+                              <li key={i}>{c}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                      {game.controls.twoPlayer && (
+                        <div>
+                          <h5 className="text-muted-foreground font-medium">
+                            Two Player:
+                          </h5>
+                          <ul className="list-disc list-inside text-muted-foreground">
+                            {game.controls.twoPlayer.map((c, i) => (
+                              <li key={i}>{c}</li>
+                            ))}
+                          </ul>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {/* Tips */}
+                  {game.tips && (
+                    <div>
+                      <h4 className="font-semibold text-foreground text-lg mb-1">
+                        Tips:
+                      </h4>
+                      <ul className="list-disc list-inside text-muted-foreground">
+                        {game.tips.map((tip, i) => (
+                          <li key={i}>{tip}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+
+                  {/* Developer */}
+                  {game.developer && (
+                    <div>
+                      <h4 className="font-semibold text-foreground text-lg mb-1">
+                        Developer:
+                      </h4>
+                      <p className="text-muted-foreground">{game.developer}</p>
+                    </div>
+                  )}
+
+                  {/* Tags */}
+                  {game.tags && game.tags.length > 0 && (
+                    <div>
+                      <h4 className="font-semibold text-foreground text-lg mb-1">
+                        Tags:
+                      </h4>
+                      <div className="flex flex-wrap gap-2">
+                        {game.tags.map((tag) => (
+                          <Badge
+                            key={tag}
+                            variant="outline"
+                            className="border-glass-border bg-glass-secondary/50 hover:bg-glass-primary transition-colors px-3 py-1"
+                          >
+                            {tag}
+                          </Badge>
+                        ))}
+                      </div>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
