@@ -14,7 +14,6 @@ const GamePage = () => {
 
   const game = gamesData.find((g) => g.id === id);
 
-  // Exit fullscreen automatically if user presses ESC in native fullscreen
   useEffect(() => {
     const onFullscreenChange = () => {
       if (!document.fullscreenElement && isFullscreen) {
@@ -45,7 +44,6 @@ const GamePage = () => {
     );
   }
 
-  // Related games logic
   const relatedGames = gamesData.filter(
     (g) =>
       g.id !== game.id &&
@@ -53,13 +51,12 @@ const GamePage = () => {
         g.title.toLowerCase().includes(game.title.toLowerCase()))
   );
 
-  // Other random games logic
   const otherGames = gamesData
     .filter(
       (g) => g.id !== game.id && !relatedGames.some((rel) => rel.id === g.id)
     )
     .sort(() => Math.random() - 0.5)
-    .slice(0, 6); // Limit to 6 random games
+    .slice(0, 6);
 
   return (
     <div
@@ -82,6 +79,7 @@ const GamePage = () => {
 
       <div className="container mx-auto px-4 py-6">
         <div className="grid lg:grid-cols-3 gap-8">
+          {/* Main Game + Details */}
           <div className="lg:col-span-2 flex flex-col">
             <Card className="relative bg-transparent shadow-none border-none">
               <CardContent className="p-0 relative">
@@ -136,89 +134,90 @@ const GamePage = () => {
             </div>
           </div>
 
-          <div>
+          {/* Sidebar Sections */}
+          <div className="space-y-10">
             {/* Related Games */}
             {relatedGames.length > 0 && (
-              <>
+              <section>
                 <h4 className="text-foreground text-xl font-semibold mb-4">
                   Related Games
                 </h4>
-                <div className="space-y-4 max-h-[70vh] overflow-y-auto scrollbar-hide">
+                <div className="grid gap-4">
                   {relatedGames.map((related) => (
                     <Card
                       key={related.id}
-                      className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-glow transition-all"
+                      className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-glow hover:border-primary transition-all duration-300"
                       onClick={() => navigate(`/game/${related.id}`)}
                     >
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={related.thumbnail}
-                            alt={related.title}
-                            className="w-16 h-16 object-cover rounded-md"
-                          />
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={related.thumbnail}
+                          alt={related.title}
+                          className="w-16 h-16 object-cover rounded-md"
+                        />
+                        <div>
                           <h5 className="text-foreground font-semibold">
                             {related.title}
                           </h5>
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {related.tags.map((tag) => (
-                            <Badge
-                              key={tag}
-                              variant="outline"
-                              className="text-xs border-glass-border bg-glass-secondary/50 px-2 py-0.5"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {related.tags.slice(0, 2).map((tag) => (
+                              <Badge
+                                key={tag}
+                                variant="outline"
+                                className="text-xs border-glass-border bg-glass-secondary/50 px-2 py-0.5"
+                              >
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </Card>
                   ))}
                 </div>
-              </>
+              </section>
             )}
 
             {/* Other Games */}
             {otherGames.length > 0 && (
-              <>
-                <h4 className="text-foreground text-xl font-semibold mt-8 mb-4">
+              <section>
+                <h4 className="text-foreground text-xl font-semibold mb-4">
                   Other Games
                 </h4>
-                <div className="space-y-4 max-h-[70vh] overflow-y-auto scrollbar-hide">
+                <div className="grid gap-4">
                   {otherGames.map((other) => (
                     <Card
                       key={other.id}
-                      className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-glow transition-all"
+                      className="bg-gradient-card backdrop-blur-glass border-glass-border p-3 cursor-pointer hover:shadow-glow hover:border-primary transition-all duration-300"
                       onClick={() => navigate(`/game/${other.id}`)}
                     >
-                      <div className="flex flex-col gap-2">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={other.thumbnail}
-                            alt={other.title}
-                            className="w-16 h-16 object-cover rounded-md"
-                          />
+                      <div className="flex items-center gap-3">
+                        <img
+                          src={other.thumbnail}
+                          alt={other.title}
+                          className="w-16 h-16 object-cover rounded-md"
+                        />
+                        <div>
                           <h5 className="text-foreground font-semibold">
                             {other.title}
                           </h5>
-                        </div>
-                        <div className="flex flex-wrap gap-1">
-                          {other.tags.map((tag) => (
-                            <Badge
-                              key={tag}
-                              variant="outline"
-                              className="text-xs border-glass-border bg-glass-secondary/50 px-2 py-0.5"
-                            >
-                              {tag}
-                            </Badge>
-                          ))}
+                          <div className="flex flex-wrap gap-1 mt-1">
+                            {other.tags.slice(0, 2).map((tag) => (
+                              <Badge
+                                key={tag}
+                                variant="outline"
+                                className="text-xs border-glass-border bg-glass-secondary/50 px-2 py-0.5"
+                              >
+                                {tag}
+                              </Badge>
+                            ))}
+                          </div>
                         </div>
                       </div>
                     </Card>
                   ))}
                 </div>
-              </>
+              </section>
             )}
           </div>
         </div>
