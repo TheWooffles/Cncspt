@@ -1,0 +1,10 @@
+{
+  "TOTAL_MEMORY": 268435456,
+  "dataUrl": "drifted.data_.unityweb",
+  "asmCodeUrl": "drifted.asm_.code_.unityweb",
+  "asmMemoryUrl": "drifted.asm_.memory.unityweb",
+  "asmFrameworkUrl": "drifted.asm_.framework.unityweb",
+  "backgroundUrl": "https://www.drifted.com/media/games/assets/img/drifted-game-loader-logo-background.webp",
+  "splashScreenStyle": "Dark",
+  "backgroundColor": "#111111"
+}
